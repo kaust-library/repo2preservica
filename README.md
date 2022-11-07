@@ -1,2 +1,4 @@
-# repo2preservica
-Script to ingest files from the repository to Presevica
+# Repo to Preservica
+
+Script to ingest files from the institutional repository into Presevica.
+
