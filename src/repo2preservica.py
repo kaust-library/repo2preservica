@@ -39,7 +39,7 @@ def main(input):
         entities = entity.identifier("code", str(dir))
         LOG.info(f"Checking number of entries: {len(entities)}")
         if len(entities) == 0:
-            LOG.info(f"Creating folder in Preservica entity")
+            LOG.info(f"Creating folder '{dir}' in Preservica entity")
             # Using the string representation of 'dir' because pyPreservica can't
             # handle Pathlib objects yet.
             str_dir = str(dir)
@@ -50,8 +50,6 @@ def main(input):
         else:
             folder_preservica = entities.pop()
             dir_l1_ref = folder_preservica.reference
-
-
 
 if __name__ == "__main__":
     main()
