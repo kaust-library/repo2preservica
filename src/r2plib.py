@@ -5,6 +5,7 @@ import os
 import collections as CC
 import configparser as CONF
 from pydantic import BaseModel
+import pathlib as PL
 
 class Folder(BaseModel):
     '''configure the folders on the local file system and on Preservica '''
@@ -32,3 +33,9 @@ def read_config(input_file: str) -> Folder:
 
     return folder
  
+def get_subdirs(root_data_dir: str) -> list:
+    '''Returns a list of subdirectories to scan for files to import into Preservica'''
+
+    root_dir = PL.Path(root_data_dir)
+
+    
