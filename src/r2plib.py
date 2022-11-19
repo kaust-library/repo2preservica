@@ -33,8 +33,12 @@ def read_config(input_file: str) -> Folder:
 
     return folder
  
-def get_subdirs(root_data_dir: str) -> list:
-    '''Returns a list of subdirectories to scan for files to import into Preservica'''
+def get_subdirs(data_dir: str) -> list:
+    '''Returns a list of subdirectories of the 'data_dir' folder.'''
 
-    root_dir = PL.Path(root_data_dir)
+    root_dir = PL.Path(data_dir)
+    subdirs = []
+
+    subdirs = [dir for dir in root_dir.iterdir() if dir.is_dir()]
+    return subdirs
 
