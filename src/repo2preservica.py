@@ -6,6 +6,7 @@ import dotenv as DOT
 import pyPreservica as PRES
 import r2plib as R2P
 import logging as LOG
+import os as OS
 
 @CL.command()
 @CL.argument('input', type=CL.File('r'))
@@ -34,15 +35,17 @@ def main(input):
 
     sub_dirs = R2P.get_subdirs(folder.data_folder)
 
+    num_submissions = 0
+
     for dir in sub_dirs:
-        LOG.info(f"Scanning folder '{dir}' for ingestion")
-        entities = entity.identifier("code", str(dir))
+        # Using the string representation of 'dir' because pyPreservica can't
+        # handle Pathlib objects yet.
+        str_dir = str(dir)
+        LOG.info(f"Scanning folder '{str_dir}' for ingestion")
+        entities = entity.identifier("code", str_dir)
         LOG.info(f"Checking number of entries: {len(entities)}")
         if len(entities) == 0:
-            LOG.info(f"Creating folder '{dir}' in Preservica entity")
-            # Using the string representation of 'dir' because pyPreservica can't
-            # handle Pathlib objects yet.
-            str_dir = str(dir)
+            LOG.info(f"Creating folder '{str_dir}' in Preservica entity")
             folder_preservica = entity.create_folder(str_dir, str_dir, 
                 folder.security_tag, parent.reference)
             entity.add_identifier(folder_preservica, "code", str_dir)
@@ -50,6 +53,26 @@ def main(input):
         else:
             folder_preservica = entities.pop()
             dir_l1_ref = folder_preservica.reference
+
+        bagit_folders = R2P.get_subdirs(dir)
+
+        # SAve current directory to return after bagging the files.
+        old_dir = OS.getcwd()
+
+        for bag_dir in bagit_folders:
+            # To avoid problems we will work with the string 
+            # representation of pathlib object 
+            str_bag = str(bag_dir)
+
+            # Change to directory with data for bagging them
+            OS.chdir(str_bag)
+
+
+
+        #
+        #Return the old dir
+        OS.chdir(old_dir)
+
 
 if __name__ == "__main__":
     main()
