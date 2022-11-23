@@ -9,11 +9,11 @@ import pathlib as PL
 
 class Folder(BaseModel):
     '''configure the folders on the local file system and on Preservica '''
-    parent_folder_id: str = ""
-    data_folder: str = ""
-    bucket: str = ""
-    max_submissions: int = 10
-    security_tag: str = 'open'
+    parent_folder_id: str
+    data_folder: str
+    bucket: str
+    max_submissions: int
+    security_tag: str
 
 
 def read_config(input_file: str) -> Folder:
@@ -22,14 +22,14 @@ def read_config(input_file: str) -> Folder:
     config._interpolation = CONF.ExtendedInterpolation()
     config.read(input_file)
 
-    folder = Folder()
-
     folders = config['FOLDERS']
-    folder.parent_folder_id = folders.get('parent_folder')
-    folder.data_folder = folders.get('data_folder')
-    folder.bucket = folders.get('bucket')
-    folder.max_submissions = folders.getint('max_submissions', 10)
-    folder.security_tag = folders.get('security_tag', 'open')
+    folder = Folder(
+        parent_folder_id = folders.get('parent_folder'), 
+        data_folder = folders.get('data_folder'),
+        bucket = folders.get('bucket'),
+        max_submissions = folders.getint('max_submissions', 10),
+        security_tag = folders.get('security_tag', 'open')
+    )
 
     return folder
  
