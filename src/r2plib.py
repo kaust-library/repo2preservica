@@ -6,6 +6,9 @@ import collections as CC
 import configparser as CONF
 from pydantic import BaseModel
 import pathlib as PL
+import typing as TY
+
+path_to_file = TY.Union[str, PL.Path]
 
 class Folder(BaseModel):
     '''configure the folders on the local file system and on Preservica '''
@@ -33,7 +36,7 @@ def read_config(input_file: str) -> Folder:
 
     return folder
  
-def get_subdirs(data_dir: str) -> list:
+def get_subdirs(data_dir: str) -> list[path_to_file]:
     '''Returns a list of subdirectories of the 'data_dir' folder.'''
 
     root_dir = PL.Path(data_dir)
