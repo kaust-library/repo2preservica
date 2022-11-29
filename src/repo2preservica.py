@@ -76,9 +76,17 @@ def main(input):
             with open(metadata_path, encoding='utf-8', mode='wt') as fmeta:
                 fmeta.write(metadata_text)
 
+            cur_dir = bag_dir.cwd()
             zipfile = f"{bag_dir}.zip"
             zf = ZIP.ZipFile(zipfile, 'w')
-            for item in bag_dir.iterdir():
+            for dirname, subdirs, files in OS.walk(bag_dir):
+                zf.write(dirnmae)
+                for ff in files:
+                        if ff == 'bagit.txt':
+                            add_comment(dirname,ff)
+            zf.close()
+
+
 
         # Change to directory with data for bagging them
         #OS.chdir(str_bag)
