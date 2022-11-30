@@ -16,6 +16,37 @@ metadata_text = """<DeliverableUnit xmlns="http://www.tessella.com/XIP/v4">
 </DeliverableUnit>"""
 
 
+def add_comment(dirname, filename):
+    file = OS.path.join(dirname, filename)
+    with open(file, encoding="utf-8", mode="rt") as fd:
+        lines = fd.readlines()
+    lines[0] = f"#{lines[0]}"
+    with open(file, encoding="utf-8", mode="wt") as fd:
+        fd.writelines(lines)
+
+def remove_comment(dirname, filename):
+    file = OS.path.join(dirname, filename)
+    with open(file, encoding="utf-8", mode="rt") as fd:
+        lines = fd.readlines()
+        lines[0] = lines[0].replace("#", "", 1)
+    with open(file, encoding="utf-8", mode="wt") as fd:
+        fd.writelines(lines)
+
+def fetch_title(dirname, filename, default):
+    t = default
+    d = default
+    file = os.path.join(dirname, filename)
+    with open(file, encoding="utf-8", mode="rt") as fd:
+        lines = fd.readlines()
+    for line in lines:
+        if line.startswith("DC_Title:"):
+            t = line.replace("DC_Title:", "").strip()
+        if line.startswith("DC_description:"):
+            d = line.replace("DC_description:", "").strip()
+    return t, d
+
+
+
 @CL.command()
 @CL.argument('input', type=CL.File('r'))
 def main(input):
@@ -80,7 +111,7 @@ def main(input):
             zipfile = f"{bag_dir}.zip"
             zf = ZIP.ZipFile(zipfile, 'w')
             for dirname, subdirs, files in OS.walk(bag_dir):
-                zf.write(dirnmae)
+                zf.write(dirname)
                 for ff in files:
                         if ff == 'bagit.txt':
                             add_comment(dirname,ff)
