@@ -7,6 +7,7 @@ import configparser as CONF
 from pydantic import BaseModel
 import pathlib as PL
 import typing as TY
+import os as OS
 
 path_to_file = TY.Union[str, PL.Path]
 
