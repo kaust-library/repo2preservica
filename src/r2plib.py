@@ -10,6 +10,36 @@ import typing as TY
 
 path_to_file = TY.Union[str, PL.Path]
 
+
+def add_comment(dirname, filename):
+    file = OS.path.join(dirname, filename)
+    with open(file, encoding="utf-8", mode="rt") as fd:
+        lines = fd.readlines()
+    lines[0] = f"#{lines[0]}"
+    with open(file, encoding="utf-8", mode="wt") as fd:
+        fd.writelines(lines)
+
+def remove_comment(dirname, filename):
+    file = OS.path.join(dirname, filename)
+    with open(file, encoding="utf-8", mode="rt") as fd:
+        lines = fd.readlines()
+        lines[0] = lines[0].replace("#", "", 1)
+    with open(file, encoding="utf-8", mode="wt") as fd:
+        fd.writelines(lines)
+
+def fetch_title(dirname, filename, default):
+    t = default
+    d = default
+    file = os.path.join(dirname, filename)
+    with open(file, encoding="utf-8", mode="rt") as fd:
+        lines = fd.readlines()
+    for line in lines:
+        if line.startswith("DC_Title:"):
+            t = line.replace("DC_Title:", "").strip()
+        if line.startswith("DC_description:"):
+            d = line.replace("DC_description:", "").strip()
+    return t, d
+
 class Folder(BaseModel):
     '''configure the folders on the local file system and on Preservica '''
     parent_folder_id: str
