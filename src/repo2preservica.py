@@ -15,38 +15,6 @@ metadata_text = """<DeliverableUnit xmlns="http://www.tessella.com/XIP/v4">
 <ScopeAndContent>SCOPE</ScopeAndContent>
 </DeliverableUnit>"""
 
-
-def add_comment(dirname, filename):
-    file = OS.path.join(dirname, filename)
-    with open(file, encoding="utf-8", mode="rt") as fd:
-        lines = fd.readlines()
-    lines[0] = f"#{lines[0]}"
-    with open(file, encoding="utf-8", mode="wt") as fd:
-        fd.writelines(lines)
-
-def remove_comment(dirname, filename):
-    file = OS.path.join(dirname, filename)
-    with open(file, encoding="utf-8", mode="rt") as fd:
-        lines = fd.readlines()
-        lines[0] = lines[0].replace("#", "", 1)
-    with open(file, encoding="utf-8", mode="wt") as fd:
-        fd.writelines(lines)
-
-def fetch_title(dirname, filename, default):
-    t = default
-    d = default
-    file = os.path.join(dirname, filename)
-    with open(file, encoding="utf-8", mode="rt") as fd:
-        lines = fd.readlines()
-    for line in lines:
-        if line.startswith("DC_Title:"):
-            t = line.replace("DC_Title:", "").strip()
-        if line.startswith("DC_description:"):
-            d = line.replace("DC_description:", "").strip()
-    return t, d
-
-
-
 @CL.command()
 @CL.argument('input', type=CL.File('r'))
 def main(input):
@@ -113,11 +81,20 @@ def main(input):
             for dirname, subdirs, files in OS.walk(bag_dir):
                 zf.write(dirname)
                 for ff in files:
-                        if ff == 'bagit.txt':
-                            add_comment(dirname,ff)
+                    if ff == 'bagit.txt':
+                        R2P.add_comment(dirname,ff)
+                        zf.write(OS.path.join(dirname, ff))
+                        R2P.remove_comment(dirname, ff)
+                    else:
+                        zf.write(dirname, ff)
             zf.close()
+            OS.remove(OS.paht.join(str_bag, metadata_file))
 
-
+            LOG.info(f"Uploading {bag_dir} to S3 bucket {folder.bucket}")
+            upload.upload_zip_package_to_S3(
+                path_to_zip_package=zipfile, 
+                folder=
+            )
 
         # Change to directory with data for bagging them
         #OS.chdir(str_bag)
