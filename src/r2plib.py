@@ -8,8 +8,27 @@ from pydantic import BaseModel
 import pathlib as PL
 import typing as TY
 import os as OS
+import zipfile as ZIP
 
 path_to_file = TY.Union[str, PL.Path]
+dir_path = path_to_file
+
+
+def create_zipfile(bagit_dir: dir_path) -> str:
+    zipfile = f"{bagit_dir}.zip"
+    zf = ZIP.ZipFile(zipfile, "w")
+    for dirname, subdirs, files in OS.walk(bagit_dir):
+        zf.write(dirname)
+        for ff in files:
+            if ff == "bagit.txt":
+                add_comment(dirname, ff)
+                zf.write(OS.path.join(dirname, ff))
+                remove_comment(dirname, ff)
+            else:
+                zf.write(dirname, ff)
+    zf.close()
+
+    return zipfile
 
 
 def save_metadata(bagit_dir: str) -> str:

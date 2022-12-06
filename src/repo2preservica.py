@@ -8,7 +8,6 @@ import r2plib as R2P
 import logging as LOG
 import os as OS
 import pathlib as PL
-import zipfile as ZIP
 
 
 @CL.command()
@@ -64,18 +63,7 @@ def main(input):
         result = entity.identifier("code", str_bag)
         LOG.info(f"Results: '{len(result)}'")
         if len(result) == 0:
-            zipfile = f"{bag_dir}.zip"
-            zf = ZIP.ZipFile(zipfile, "w")
-            for dirname, subdirs, files in OS.walk(bag_dir):
-                zf.write(dirname)
-                for ff in files:
-                    if ff == "bagit.txt":
-                        R2P.add_comment(dirname, ff)
-                        zf.write(OS.path.join(dirname, ff))
-                        R2P.remove_comment(dirname, ff)
-                    else:
-                        zf.write(dirname, ff)
-            zf.close()
+            zipfile = R2P.create_zipfile(bag_dir)
             OS.remove(metadata_path)
 
             LOG.info(f"Uploading {bag_dir} to S3 bucket {folder.bucket}")
