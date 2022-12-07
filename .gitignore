@@ -1,5 +1,6 @@
 # Test files to ingest into Preservica
 data/
+src/test_zip.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
