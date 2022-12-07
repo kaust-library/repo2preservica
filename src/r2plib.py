@@ -14,10 +14,18 @@ path_to_file = TY.Union[str, PL.Path]
 dir_path = path_to_file
 
 
-def create_zipfile(bagit_dir: dir_path) -> str:
+def create_zipfile(bagit_dir_path: dir_path) -> str:
+    """Create a zipfile with the content of 'bagit_dir_path', where
+    bagit_dir_path is the full path to the folder.
+
+    Returns the name of the zipfile
+    """
+    bagit_dir = bagit_dir_path.name
     zipfile = f"{bagit_dir}.zip"
     zf = ZIP.ZipFile(zipfile, "w")
+    # print(f"Bagit_dir: '{bagit_dir}'")
     for dirname, subdirs, files in OS.walk(bagit_dir):
+        # print(f"dirname: '{dirname}'")
         zf.write(dirname)
         for ff in files:
             if ff == "bagit.txt":
@@ -25,13 +33,13 @@ def create_zipfile(bagit_dir: dir_path) -> str:
                 zf.write(OS.path.join(dirname, ff))
                 remove_comment(dirname, ff)
             else:
-                zf.write(dirname, ff)
+                zf.write(os.path.join(dirname, ff))
     zf.close()
 
     return zipfile
 
 
-def save_metadata(bagit_dir: str) -> str:
+def save_metadata(bagit_dir: dir_path) -> str:
     """Save metatada to a file name <bagit_dir>.metadata"""
 
     title = bagit_dir
@@ -111,11 +119,10 @@ def read_config(input_file: str) -> Folder:
     return folder
 
 
-def get_subdirs(data_dir: str) -> list[path_to_file]:
+def get_subdirs(data_dir: dir_path) -> list[path_to_file]:
     """Returns a list of subdirectories of the 'data_dir' folder."""
 
-    root_dir = PL.Path(data_dir)
     subdirs = []
 
-    subdirs = [dir for dir in root_dir.iterdir() if dir.is_dir()]
+    subdirs = [dir for dir in data_dir.iterdir() if dir.is_dir()]
     return subdirs
