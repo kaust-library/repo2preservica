@@ -91,31 +91,6 @@ def main(input):
             bagit_folder_preservica = bagit_identifier.pop()
             # bagit_preserv_ref = bagit_folder_preservica.reference
 
-        # LOG.info(f"Scanning folder '{bagit_dir}'")
-        # To avoid problems we will work with the string
-        # representation of pathlib object
-        # str_bagit = str(bagit_name)
-
-        # # Save metadata to file <str_bagit>.metadata
-        # result = entity.identifier("code", bagit_name)
-        # LOG.info(f"Results: '{len(result)}'")
-        # if len(result) == 0:
-        #     metadata_path = R2P.save_metadata(str_bagit)
-        #     LOG.info(f"Created metadata file '{metadata_path}'")
-        #     zipfile = R2P.create_zipfile(bagit_dir)
-        #     OS.remove(metadata_path)
-
-        #     LOG.info(f"Uploading {bagit_dir} to S3 bucket {folder.bucket}")
-        #     upload.upload_zip_package_to_S3(
-        #         path_to_zip_package=zipfile,
-        #         bucket_name=folder.bucket,
-        #         callback=PRES.UploadProgressConsoleCallback(zipfile),
-        #         delete_after_upload=True,
-        #     )
-
-        # Change to directory with data for bagging them
-        # OS.chdir(str_bagit)
-
 
 if __name__ == "__main__":
     main()
