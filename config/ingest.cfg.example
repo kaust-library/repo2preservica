@@ -1,8 +1,8 @@
 # Parameters for Preservica ingestion
 
 [FOLDERS]
-parent_folder = 7c923ec0-7ef5-486b-b92d-9e1f8dda8aa7
+parent_folder = 7c923ec1-7ef6-486c-b92c-9e1f8dda8aa8
 data_folder = ./data/in
-bucket = com.preservica.kaust.upload
+bucket = com.preservica.my-corp.upload
 max_submissions = 10
 security_tag = open
