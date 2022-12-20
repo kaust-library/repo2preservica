@@ -81,6 +81,7 @@ def main(input):
                 path_to_zip_package=zipfile,
                 bucket_name=folder.bucket,
                 callback=PRES.UploadProgressConsoleCallback(zipfile),
+                Preservation_files_fixity_callback=PRES.Sha256FixityCallBack(),
                 delete_after_upload=True,
                 folder=bagit_preserv_ref,
             )
