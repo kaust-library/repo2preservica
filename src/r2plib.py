@@ -9,9 +9,27 @@ import pathlib as PL
 import typing as TY
 import os as OS
 import zipfile as ZIP
+import pyPreservica as PRES
 
 path_to_file = TY.Union[str, PL.Path]
 dir_path = path_to_file
+
+
+def create_package(bagit_dir: dir_path, parent_folder: str) -> str:
+    """Create a XIPv6 package (zip file) from the files in 'bagit_dir'
+    and returns the path to the package"""
+
+    path_files = []
+    for root, dirs, files in os.walk(bagit_dir):
+        path_files.extend(os.path.join(root, file) for file in files)
+
+    package_path = PRES.complex_asset_package(
+        preservation_files_list=path_files,
+        parent_folder=parent_folder,
+        Preservation_files_fixity_callback=PRES.Sha512FixityCallBack(),
+    )
+
+    return package_path
 
 
 def create_zipfile(bagit_dir_path: dir_path) -> str:
