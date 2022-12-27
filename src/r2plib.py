@@ -12,10 +12,10 @@ import zipfile as ZIP
 import pyPreservica as PRES
 
 path_to_file = TY.Union[str, PL.Path]
-dir_path = path_to_file
+path_to_dir = path_to_file
 
 
-def create_package(bagit_dir: dir_path, parent_folder: str) -> str:
+def create_package(bagit_dir: path_to_dir, parent_folder: str) -> path_to_file:
     """Create a XIPv6 package (zip file) from the files in 'bagit_dir'
     and returns the path to the package"""
 
@@ -26,19 +26,20 @@ def create_package(bagit_dir: dir_path, parent_folder: str) -> str:
     package_path = PRES.complex_asset_package(
         preservation_files_list=path_files,
         parent_folder=parent_folder,
-        Preservation_files_fixity_callback=PRES.Sha512FixityCallBack(),
+        Preservation_files_fixity_callback=PRES.Sha256FixityCallBack(),
+        export_folder="packages",
     )
 
     return package_path
 
 
-def create_zipfile(bagit_dir_path: dir_path) -> str:
-    """Create a zipfile with the content of 'bagit_dir_path', where
-    bagit_dir_path is the full path to the folder.
+def create_zipfile(bagit_path_to_dir: path_to_dir) -> str:
+    """Create a zipfile with the content of 'bagit_path_to_dir', where
+    bagit_path_to_dir is the full path to the folder.
 
     Returns the name of the zipfile
     """
-    bagit_dir = bagit_dir_path.name
+    bagit_dir = bagit_path_to_dir.name
     zipfile = f"{bagit_dir}.zip"
     zf = ZIP.ZipFile(zipfile, "w")
     # print(f"Bagit_dir: '{bagit_dir}'")
@@ -57,7 +58,7 @@ def create_zipfile(bagit_dir_path: dir_path) -> str:
     return zipfile
 
 
-def save_metadata(bagit_dir: dir_path) -> str:
+def save_metadata(bagit_dir: path_to_dir) -> str:
     """Save metatada to a file name <bagit_dir>.metadata"""
 
     title = bagit_dir
@@ -137,7 +138,7 @@ def read_config(input_file: str) -> Folder:
     return folder
 
 
-def get_subdirs(data_dir: dir_path) -> list[path_to_file]:
+def get_subdirs(data_dir: path_to_dir) -> list[path_to_file]:
     """Returns a list of subdirectories of the 'data_dir' folder."""
 
     subdirs = []
