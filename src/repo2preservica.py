@@ -69,19 +69,23 @@ def main(input):
             bagit_preserv_ref = bagit_folder_preservica.reference
 
             # Preparing content for upload
-            LOG.info(f"Creating metadata file for '{bagit_name}'")
-            metadata_path = R2P.save_metadata(bagit_name)
-            LOG.info(f"Creating zip with folder '{bagit_name}' content")
-            zipfile = R2P.create_zipfile(bagit_dir)
-            LOG.info(f"Removing metadata file '{metadata_path}'")
-            OS.remove(metadata_path)
+            # LOG.info(f"Creating metadata file for '{bagit_name}'")
+            # metadata_path = R2P.save_metadata(bagit_name)
+            # LOG.info(f"Creating zip with folder '{bagit_name}' content")
+            # zipfile = R2P.create_zipfile(bagit_dir)
+            # LOG.info(f"Removing metadata file '{metadata_path}'")
+            # OS.remove(metadata_path)
+
+            LOG.info(f"Creating package for file in '{bagit_dir}'")
+            package_path = R2P.create_package(bagit_dir, bagit_preserv_ref)
+            LOG.info(f"Package path: '{package_path}'")
 
             LOG.info(f"Uploading {bagit_dir} to S3 bucket {folder.bucket}")
             upload.upload_zip_package_to_S3(
-                path_to_zip_package=zipfile,
+                path_to_zip_package=package_path,
                 bucket_name=folder.bucket,
-                callback=PRES.UploadProgressConsoleCallback(zipfile),
-                delete_after_upload=True,
+                callback=PRES.UploadProgressConsoleCallback(package_path),
+                delete_after_upload=False,
                 folder=bagit_preserv_ref,
             )
 

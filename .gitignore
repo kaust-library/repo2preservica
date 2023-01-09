@@ -2,6 +2,8 @@
 data/
 src/test_zip.py
 config/ingest.cfg
+packages
+.vscode/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
