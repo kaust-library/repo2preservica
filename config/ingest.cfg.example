@@ -2,7 +2,13 @@
 
 [FOLDERS]
 parent_folder = 7c923ec1-7ef6-486c-b92e-9e1f8dda8aa8
+# The folder on the test system is '/repo/in'
 data_folder = ./data/in
 bucket = com.preservica.my-corp.upload
 max_submissions = 10
 security_tag = open
+# If 'zip', the package to upload will be created "by hand" as a zip file
+# by the `create_zipfile` function. 
+# If "upload_api" the package will be created with PyPreservica directly
+# on the "upload" API.
+xip_package = zip
