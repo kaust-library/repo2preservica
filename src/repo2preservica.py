@@ -68,32 +68,48 @@ def main(input):
             entity.add_identifier(bagit_folder_preservica, "code", bagit_name)
             bagit_preserv_ref = bagit_folder_preservica.reference
 
-            # Preparing content for upload
-            # LOG.info(f"Creating metadata file for '{bagit_name}'")
-            # metadata_path = R2P.save_metadata(bagit_name)
-            # LOG.info(f"Creating zip with folder '{bagit_name}' content")
-            # zipfile = R2P.create_zipfile(bagit_dir)
-            # LOG.info(f"Removing metadata file '{metadata_path}'")
-            # OS.remove(metadata_path)
+            if folder.xip_package == "zip":
+                # Preparing content for upload
+                LOG.info(f"Creating metadata file for '{bagit_name}'")
+                metadata_path = R2P.save_metadata(bagit_name)
+                LOG.info(f"Creating zip with folder '{bagit_name}' content")
+                zipfile = R2P.create_zipfile(bagit_dir)
+                upload.upload_zip_package_to_S3(
+                    path_to_zip_package=zipfile,
+                    folder=bagit_preserv_ref,
+                    bucket_name=folder.bucket,
+                    callback=PRES.UploadProgressConsoleCallback(zipfile),
+                    delete_after_upload=True,
+                )
 
-            LOG.info(f"Creating package for file in '{bagit_dir}'")
-            package_path = R2P.create_package(bagit_dir, bagit_preserv_ref)
-            LOG.info(f"Package path: '{package_path}'")
+                LOG.info(f"Removing metadata file '{metadata_path}'")
+                OS.remove(metadata_path)
+            elif folder.xip_package == "upload_api":
+                LOG.info(f"Creating package for file in '{bagit_dir}'")
+                package_path = R2P.create_package(bagit_dir, bagit_preserv_ref)
+                LOG.info(f"Package path: '{package_path}'")
 
-            LOG.info(f"Uploading {bagit_dir} to S3 bucket {folder.bucket}")
-            upload.upload_zip_package_to_S3(
-                path_to_zip_package=package_path,
-                bucket_name=folder.bucket,
-                callback=PRES.UploadProgressConsoleCallback(package_path),
-                delete_after_upload=False,
-                folder=bagit_preserv_ref,
-            )
-
+                LOG.info(f"Uploading {bagit_dir} to S3 bucket {folder.bucket}")
+                upload.upload_zip_package_to_S3(
+                    path_to_zip_package=package_path,
+                    bucket_name=folder.bucket,
+                    callback=PRES.UploadProgressConsoleCallback(package_path),
+                    delete_after_upload=False,
+                    folder=bagit_preserv_ref,
+                )
+            else:
+                LOG.critical("'xip_package' must be 'zip' or 'upload_api'")
+                raise ValueError("Incorrect value for 'xip_package'")
         else:
             LOG.info(f"Preservica folde '{bagit_name}' already exists")
             LOG.info("Skipping folder")
             bagit_folder_preservica = bagit_identifier.pop()
             # bagit_preserv_ref = bagit_folder_preservica.reference
+
+    #
+    # The End.
+    #
+    OS.chdir(old_dir)
 
 
 if __name__ == "__main__":

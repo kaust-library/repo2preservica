@@ -118,6 +118,7 @@ class Folder(BaseModel):
     bucket: str
     max_submissions: int
     security_tag: str
+    xip_package: str
 
 
 def read_config(input_file: str) -> Folder:
@@ -133,6 +134,7 @@ def read_config(input_file: str) -> Folder:
         bucket=folders.get("bucket"),
         max_submissions=folders.getint("max_submissions", 10),
         security_tag=folders.get("security_tag", "open"),
+        xip_package=folders.get("xip_package", "zip"),
     )
 
     return folder
