@@ -24,22 +24,25 @@ def main(input):
     upload = PRES.UploadAPI()
     LOG.info(f"Entity: '{entity}'")
 
-    # Read config. file
-    folder = R2P.read_config(input.name)
+    # Read config. file.
+    # Note. The term 'collection' is borrowed from the PyPreservica
+    # documentation, to reference 'folder,' because it seems the term
+    # 'folder' already is used by the Upload API.
+    collection = R2P.read_config(input.name)
 
-    # Check if the parent folder ID was declared in the config file.
-    if folder.parent_folder_id:
-        parent = entity.folder(folder.parent_folder_id)
+    # Check if the parent collection ID was declared in the config file.
+    if collection.parent_folder_id:
+        parent = entity.folder(collection.parent_folder_id)
         LOG.info(f"Files will be ingest into '{parent.title}'.")
         parent_ref = parent.reference
     else:
-        LOG.warning("No parent folder was declared in config file.")
+        LOG.warning("No parent collection was declared in config file.")
         parent = None
 
     num_submissions = 0
 
     old_dir = PL.Path.cwd()
-    OS.chdir(folder.data_folder)
+    OS.chdir(collection.data_folder)
 
     bagit_dirs = R2P.get_subdirs(PL.Path.cwd())
 
@@ -49,8 +52,8 @@ def main(input):
     )
     for bagit_dir in bagit_dirs:
 
-        if num_submissions >= folder.max_submissions:
-            LOG.warning(f"NUmber of submissions exceed {folder.max_submissions}")
+        if num_submissions >= collection.max_submissions:
+            LOG.warning(f"NUmber of submissions exceed {collection.max_submissions}")
             break
 
         # 'bagit_dir' is the full path to the folder, but we want only
@@ -61,14 +64,14 @@ def main(input):
         bagit_identifier = entity.identifier("code", bagit_name)
         if len(bagit_identifier) == 0:
             # Creating the folder
-            LOG.info(f"Creating Preservica folder '{bagit_name}'")
+            LOG.info(f"Creating Preservica collection '{bagit_name}'")
             bagit_folder_preservica = entity.create_folder(
-                bagit_name, bagit_name, folder.security_tag, parent_ref
+                bagit_name, bagit_name, collection.security_tag, parent_ref
             )
             entity.add_identifier(bagit_folder_preservica, "code", bagit_name)
             bagit_preserv_ref = bagit_folder_preservica.reference
 
-            if folder.xip_package == "zip":
+            if collection.xip_package == "zip":
                 # Preparing content for upload
                 LOG.info(f"Creating metadata file for '{bagit_name}'")
                 metadata_path = R2P.save_metadata(bagit_name)
@@ -77,28 +80,30 @@ def main(input):
                 upload.upload_zip_package_to_S3(
                     path_to_zip_package=zipfile,
                     folder=bagit_preserv_ref,
-                    bucket_name=folder.bucket,
+                    bucket_name=collection.bucket,
                     callback=PRES.UploadProgressConsoleCallback(zipfile),
-                    delete_after_upload=True,
+                    delete_after_upload=False,
                 )
 
-                LOG.info(f"Removing metadata file '{metadata_path}'")
-                OS.remove(metadata_path)
-            elif folder.xip_package == "upload_api":
+                # LOG.info(f"Removing metadata file '{metadata_path}'")
+                # OS.remove(metadata_path)
+            elif collection.xip_package == "upload_api":
                 LOG.info(f"Creating package for file in '{bagit_dir}'")
                 package_path = R2P.create_package(bagit_dir, bagit_preserv_ref)
                 LOG.info(f"Package path: '{package_path}'")
 
-                LOG.info(f"Uploading {bagit_dir} to S3 bucket {folder.bucket}")
+                LOG.info(f"Uploading {bagit_dir} to S3 bucket {collection.bucket}")
                 upload.upload_zip_package_to_S3(
                     path_to_zip_package=package_path,
-                    bucket_name=folder.bucket,
+                    bucket_name=collection.bucket,
                     callback=PRES.UploadProgressConsoleCallback(package_path),
                     delete_after_upload=False,
                     folder=bagit_preserv_ref,
                 )
             else:
-                LOG.critical("'xip_package' must be 'zip' or 'upload_api'")
+                LOG.critical(
+                    "'xip_package' must be 'zip' or 'upload_api'. Fix `ingest.cfg' file"
+                )
                 raise ValueError("Incorrect value for 'xip_package'")
         else:
             LOG.info(f"Preservica folde '{bagit_name}' already exists")
