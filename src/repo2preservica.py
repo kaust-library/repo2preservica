@@ -11,7 +11,7 @@ import pathlib as PL
 
 
 @CL.command()
-@CL.argument("input", type=CL.File("r"))
+@CL.argument("input", type=CL.Path("r"))
 def main(input):
 
     LOG.basicConfig(encoding="utf-8", level=LOG.INFO)
@@ -28,7 +28,7 @@ def main(input):
     # Note. The term 'collection' is borrowed from the PyPreservica
     # documentation, to reference 'folder,' because it seems the term
     # 'folder' already is used by the Upload API.
-    collection = R2P.read_config(input.name)
+    collection = R2P.read_config(input)
 
     # Check if the parent collection ID was declared in the config file.
     if collection.parent_folder_id:
