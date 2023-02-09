@@ -85,8 +85,8 @@ def main(input):
                     delete_after_upload=False,
                 )
 
-                # LOG.info(f"Removing metadata file '{metadata_path}'")
-                # OS.remove(metadata_path)
+                LOG.info(f"Removing metadata file '{metadata_path}'")
+                OS.remove(metadata_path)
             elif collection.xip_package == "upload_api":
                 LOG.info(f"Creating package for file in '{bagit_dir}'")
                 package_path = R2P.create_package(bagit_dir, bagit_preserv_ref)
