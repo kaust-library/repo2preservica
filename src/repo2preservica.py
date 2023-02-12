@@ -8,7 +8,7 @@ import r2plib as R2P
 import logging as LOG
 import os as OS
 import pathlib as PL
-
+import pprint as PP
 
 # @CL.command()
 # @CL.argument("input", type=CL.Path("r"))
@@ -108,8 +108,18 @@ def main(input):
         else:
             LOG.info(f"Preservica folde '{bagit_name}' already exists")
             LOG.info("Skipping folder")
-            bagit_folder_preservica = bagit_identifier.pop()
+            # bagit_folder_preservica = bagit_identifier.pop()
+            # Keep list of just directories that were ingested.
+            bagit_dirs.remove(bagit_dir)
             # bagit_preserv_ref = bagit_folder_preservica.reference
+
+        #
+        # Compare SHA1 of files ingested with the original value from the
+        # repository.
+        #
+    for dir in bagit_dirs:
+        sha1_repo = R2P.load_sha_repo(dir)
+        PP.pprint(sha1_repo)
 
     #
     # The End.

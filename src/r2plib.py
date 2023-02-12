@@ -147,3 +147,16 @@ def get_subdirs(data_dir: path_to_dir) -> list[path_to_file]:
 
     subdirs = [dir for dir in data_dir.iterdir() if dir.is_dir()]
     return subdirs
+
+
+def load_sha_repo(dir: path_to_file) -> list:
+    """
+    Return a list with files and checksum for each file in 'dir'
+    """
+
+    file_name = dir.joinpath("sha1.txt")
+
+    with open(file_name, "r") as ff:
+        text = ff.readlines()
+
+    return [line.strip().split()[3:] for line in text if len(line) > 1]
