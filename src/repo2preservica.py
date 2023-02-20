@@ -10,8 +10,8 @@ import os as OS
 import pathlib as PL
 import pprint as PP
 
-# @CL.command()
-# @CL.argument("input", type=CL.Path("r"))
+@CL.command()
+@CL.argument("input", type=CL.Path("r"))
 def main(input):
 
     LOG.basicConfig(encoding="utf-8", level=LOG.INFO)
@@ -129,7 +129,7 @@ def main(input):
 
 if __name__ == "__main__":
 
-    input = OS.path.join("config", "ingest.cfg")
-    print(f"Input file: {input}")
+    # input = OS.path.join("config", "ingest.cfg")
+    # print(f"Input file: {input}")
 
     main(input)
