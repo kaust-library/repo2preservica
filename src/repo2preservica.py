@@ -50,7 +50,12 @@ def main(input):
     LOG.info(
         f"We found {len(bagit_dirs)} {len(bagit_dirs) > 1 and 'folders' or 'folder'} to scan"
     )
+    skipped_folder = ""
     for bagit_dir in bagit_dirs:
+        # Remove the folders that were skipped, and keep only the ones that
+        # were uploaded
+        if skipped_folder:
+            bagit_dirs.remove(skipped_folder)
 
         if num_submissions >= collection.max_submissions:
             LOG.warning(f"NUmber of submissions exceed {collection.max_submissions}")
@@ -64,7 +69,7 @@ def main(input):
         bagit_identifier = entity.identifier("code", bagit_name)
         if len(bagit_identifier) == 0:
             # Creating the folder
-            LOG.info(f"Creating Preservica collection '{bagit_name}'")
+            LOG.info(f"Creating Preservica folder '{bagit_name}'")
             bagit_folder_preservica = entity.create_folder(
                 bagit_name, bagit_name, collection.security_tag, parent_ref
             )
@@ -108,22 +113,20 @@ def main(input):
         else:
             LOG.info(f"Preservica folde '{bagit_name}' already exists")
             LOG.info("Skipping folder")
-            # bagit_folder_preservica = bagit_identifier.pop()
-            # Keep list of just directories that were ingested.
-            bagit_dirs.remove(bagit_dir)
-            # bagit_preserv_ref = bagit_folder_preservica.reference
+            skipped_folder = bagit_dir
 
-        #
-        # Compare SHA1 of files ingested with the original value from the
-        # repository.
-        #
-    for dir in bagit_dirs:
-        sha1_repo = R2P.load_sha_repo(dir)
-        PP.pprint(sha1_repo)
+    #
+    # Compare SHA1 of files ingested with the original value from the
+    # repository.
+    #
+    # for dir in bagit_dirs:
+    #     sha1_repo = R2P.load_sha_repo(dir)
+    #     PP.pprint(sha1_repo)
 
     #
     # The End.
     #
+    LOG.info("The End.")
     OS.chdir(old_dir)
 
 
@@ -132,4 +135,4 @@ if __name__ == "__main__":
     # input = OS.path.join("config", "ingest.cfg")
     # print(f"Input file: {input}")
 
-    main(input)
+    main()
