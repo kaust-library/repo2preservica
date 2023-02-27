@@ -111,7 +111,7 @@ def main(input):
                 )
                 raise ValueError("Incorrect value for 'xip_package'")
         else:
-            LOG.info(f"Preservica folde '{bagit_name}' already exists")
+            LOG.info(f"Preservica folder '{bagit_name}' already exists")
             LOG.info("Skipping folder")
             skipped_folder = bagit_dir
 
