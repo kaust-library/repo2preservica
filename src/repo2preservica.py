@@ -56,6 +56,7 @@ def main(input):
         # were uploaded
         if skipped_folder:
             bagit_dirs.remove(skipped_folder)
+            skipped_folder = ""
 
         if num_submissions >= collection.max_submissions:
             LOG.warning(f"NUmber of submissions exceed {collection.max_submissions}")
