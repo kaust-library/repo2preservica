@@ -9,11 +9,12 @@ import logging as LOG
 import os as OS
 import pathlib as PL
 import pprint as PP
+import time as TM
+
 
 @CL.command()
 @CL.argument("input", type=CL.Path("r"))
 def main(input):
-
     LOG.basicConfig(encoding="utf-8", level=LOG.INFO)
 
     # Read credentials from the environment variables
@@ -50,14 +51,10 @@ def main(input):
     LOG.info(
         f"We found {len(bagit_dirs)} {len(bagit_dirs) > 1 and 'folders' or 'folder'} to scan"
     )
-    skipped_folder = ""
+    uploaded_folders = []
     for bagit_dir in bagit_dirs:
         # Remove the folders that were skipped, and keep only the ones that
         # were uploaded
-        if skipped_folder:
-            bagit_dirs.remove(skipped_folder)
-            skipped_folder = ""
-
         if num_submissions >= collection.max_submissions:
             LOG.warning(f"NUmber of submissions exceed {collection.max_submissions}")
             break
@@ -90,9 +87,9 @@ def main(input):
                     callback=PRES.UploadProgressConsoleCallback(zipfile),
                     delete_after_upload=False,
                 )
-
                 LOG.info(f"Removing metadata file '{metadata_path}'")
                 OS.remove(metadata_path)
+                uploaded_folders.append(bagit_dir)
             elif collection.xip_package == "upload_api":
                 LOG.info(f"Creating package for file in '{bagit_dir}'")
                 package_path = R2P.create_package(bagit_dir, bagit_preserv_ref)
@@ -114,15 +111,39 @@ def main(input):
         else:
             LOG.info(f"Preservica folder '{bagit_name}' already exists")
             LOG.info("Skipping folder")
-            skipped_folder = bagit_dir
 
     #
     # Compare SHA1 of files ingested with the original value from the
     # repository.
     #
-    # for dir in bagit_dirs:
-    #     sha1_repo = R2P.load_sha_repo(dir)
-    #     PP.pprint(sha1_repo)
+    for uploaded in uploaded_folders:
+        uploaded_name = uploaded.name
+        print(f"Bag name: '{uploaded_name}'")
+        for cc in range(1, 6):
+            pres_items_chk = R2P.pres_checksum(entity, uploaded_name)
+            if pres_items_chk:
+                LOG.info("Finished reading checksum from Preservica")
+                break
+            else:
+                LOG.info(
+                    "Waiting for Preservica scan items for virus and make them available for reading."
+                )
+                LOG.info(f"Sleeping 2 minutes, {cc} of 5.")
+                TM.sleep(120)
+        if not pres_items_chk:
+            # Something went wrong!!
+            LOG.critical(
+                f"Unable to read items from Preservica after 5 attempts/10 minutes."
+            )
+            raise ValueError("'pres_items_chk' can't be empty")
+        repo_items_chk = R2P.repo_checksum(uploaded_name)
+        for kk in repo_items_chk.keys():
+            if repo_items_chk[kk] == pres_items_chk[kk]:
+                LOG.info(f"{kk} is the same")
+            elif repo_items_chk[kk] != pres_items_chk[kk]:
+                LOG.warn(f"{kk} is mismatch")
+            else:
+                LOG.error("Error comparing checksum")
 
     #
     # The End.
@@ -132,7 +153,6 @@ def main(input):
 
 
 if __name__ == "__main__":
-
     # input = OS.path.join("config", "ingest.cfg")
     # print(f"Input file: {input}")
 

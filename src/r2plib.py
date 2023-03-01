@@ -160,3 +160,55 @@ def load_sha_repo(dir: path_to_file) -> list:
         text = ff.readlines()
 
     return [line.strip().split()[3:] for line in text if len(line) > 1]
+
+
+def pres_checksum(entity, folder_name):
+    """
+    Query Preservica object 'entity' for the 'folder_name', and return a dictionary with the filename and SHA1 checksum.
+    """
+
+    pres_items_sha = {}
+
+    for ee in entity.identifier("code", folder_name):
+        ee_child = entity.children(ee.reference)
+        if ee_child.get_total() > 1:
+            # This is the 'reference' folder with all the files.
+            for cc in ee_child.results:
+                if cc.entity_type == PRES.EntityType.ASSET:
+                    asset = entity.asset(cc.reference)
+                    for bitstream in entity.bitstreams_for_asset(asset):
+                        for algorithm, value in bitstream.fixity.items():
+                            pres_items_sha.update({bitstream.filename: value})
+                elif cc.entity_type == PRES.EntityType.FOLDER:
+                    data_children = entity.children(cc.reference)
+                    for dd in data_children.results:
+                        dd_asset = entity.asset(dd.reference)
+                        for bb in entity.bitstreams_for_asset(dd_asset):
+                            for algorithm, value in bb.fixity.items():
+                                pres_items_sha.update(
+                                    {f"{cc.title}/{bb.filename}": value}
+                                )
+
+    return pres_items_sha
+
+
+def repo_checksum(folder_name):
+    """
+    Read the file 'sha1.txt' inside folder 'folder_name', and return a dictionary with file names and checksum.
+    """
+
+    repo_items_sha = {}
+
+    # Read content of 'sha1.txt'
+    with open(PL.Path(folder_name).joinpath("sha1.txt")) as ff:
+        text = ff.readlines()
+    text = [line.strip().split()[3:] for line in text if len(line) > 1]
+    for line in text:
+        repo_path_list, repo_sha = line[0].split("/"), line[1]
+        bag_dir_pos = repo_path_list.index(folder_name) + 1
+        repo_items = repo_path_list[bag_dir_pos:]
+        # print(f"{'/'.join([ii for ii in repo_items])} {repo_sha}")
+        repo_item = f"{'/'.join([ii for ii in repo_items])}"
+        repo_items_sha.update({repo_item: repo_sha})
+
+    return repo_items_sha
