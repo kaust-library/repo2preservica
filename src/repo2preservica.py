@@ -119,7 +119,7 @@ def main(input):
     for uploaded in uploaded_folders:
         uploaded_name = uploaded.name
         print(f"Bag name: '{uploaded_name}'")
-        # We need to consider the time it takes for Preservica to scan the 
+        # We need to consider the time it takes for Preservica to scan the
         # new files for virus before making them available on our area.
         # We will wait for 10 minutes (5 times for 2 minutes). If not
         # enough, we gave up and abort the script.
