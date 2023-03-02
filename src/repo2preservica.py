@@ -119,6 +119,10 @@ def main(input):
     for uploaded in uploaded_folders:
         uploaded_name = uploaded.name
         print(f"Bag name: '{uploaded_name}'")
+        # We need to consider the time it takes for Preservica to scan the 
+        # new files for virus before making them available on our area.
+        # We will wait for 10 minutes (5 times for 2 minutes). If not
+        # enough, we gave up and abort the script.
         for cc in range(1, 6):
             pres_items_chk = R2P.pres_checksum(entity, uploaded_name)
             if pres_items_chk:
@@ -135,7 +139,7 @@ def main(input):
             LOG.critical(
                 f"Unable to read items from Preservica after 5 attempts/10 minutes."
             )
-            raise ValueError("'pres_items_chk' can't be empty")
+            raise ValueError("'pres_items_chk' can't be empty after 10 minutes")
         repo_items_chk = R2P.repo_checksum(uploaded_name)
         for kk in repo_items_chk.keys():
             if repo_items_chk[kk] == pres_items_chk[kk]:
