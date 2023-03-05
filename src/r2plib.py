@@ -140,7 +140,7 @@ def read_config(input_file: str) -> Folder:
     return folder
 
 
-def get_subdirs(data_dir: path_to_dir) -> list[path_to_file]:
+def get_subdirs(data_dir: path_to_dir) -> TY.List[path_to_file]:
     """Returns a list of subdirectories of the 'data_dir' folder."""
 
     subdirs = []
