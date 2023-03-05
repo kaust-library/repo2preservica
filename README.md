@@ -12,7 +12,10 @@ request an Asset (Information Object) by its unique reference and display some o
 
 ## Configuration
 
-Use the file `.env_example` to customize your version of the `.env` file with the credentials for Preservica.
+Files that need to be edited before running the script:
+
+- `.env` with the credentials to Preservica. See the file `.env_example`
+- `config/ingest.cfg` with informations "run time" information like the directory with the subdirectories to ingest, which Preservica folder to use, among others.
 
 ## Running the Script
 
