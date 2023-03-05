@@ -74,3 +74,19 @@ library-sds@lthlibtest:/data/scripts/repo2preservica$ git pull
 Already up to date.
 library-sds@lthlibtest:/data/scripts/repo2preservica$
 ```
+
+## Pywin32 and Linux
+
+When installing on Linux, the `pip install` will fail because the package `pywin32` is missing. The [workaround is to add a parameter](https://github.com/mhammond/pywin32/issues/1739) to the entry of the package in the `requirements.txt` marking as Windows only package
+
+```
+pywin32==305; platform_system=="Windows"
+```
+
+When installing on Linux, you will see message about ignoring the package
+
+```
+(venv) mgarcia@PC-KL-21621:~/Work/repo2preservica$ pip install -r requirements.txt
+Ignoring pywin32: markers 'platform_system == "Windows"' don't match your environment
+(...)
+```
