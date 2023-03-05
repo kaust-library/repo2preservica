@@ -15,8 +15,8 @@ import time as TM
 @CL.command()
 @CL.argument("input", type=CL.Path("r"))
 def main(input):
-    LOG.basicConfig(encoding="utf-8", level=LOG.INFO)
-
+    # Python >3.8: LOG.basicConfig(encoding="utf-8", level=LOG.INFO)
+    LOG.basicConfig(level=LOG.INFO)
     # Read credentials from the environment variables
     DOT.load_dotenv()
 
