@@ -51,3 +51,23 @@ INFO:root:sha256.txt is the same
 INFO:root:data/147584-295966.metadata is the same
 INFO:root:data/147584-295966.pdf is the same
 ```
+
+When setting the ownership of the directory to `library-sds`, it's necessary to "inform" git about it:
+
+```
+(venv) a-garcm0b@lthlibtest:/data/scripts$ sudo chown -R library-sds:ci-library repo2preservica/
+(venv) a-garcm0b@lthlibtest:/data/scripts/repo2preservica$ git pull
+fatal: detected dubious ownership in repository at '/data/scripts/repo2preservica'
+To add an exception for this directory, call:
+
+        git config --global --add safe.directory /data/scripts/repo2preservica
+(venv) a-garcm0b@lthlibtest:/data/scripts/repo2preservica$
+(venv) a-garcm0b@lthlibtest:/data/scripts/repo2preservica$ git config --global --add safe.directory /data/scripts/repo2preservica
+(venv) a-garcm0b@lthlibtest:/data/scripts/repo2preservica$ sudo -i -u library-sds
+library-sds@lthlibtest:/data/scripts/repo2preservica$ whoami
+library-sds
+library-sds@lthlibtest:/data/scripts/repo2preservica$
+library-sds@lthlibtest:/data/scripts/repo2preservica$ git pull
+Already up to date.
+library-sds@lthlibtest:/data/scripts/repo2preservica$
+```
