@@ -90,6 +90,8 @@ def main(input):
                 LOG.info(f"Removing metadata file '{metadata_path}'")
                 OS.remove(metadata_path)
                 uploaded_folders.append(bagit_dir)
+                num_submissions = num_submissions + 1
+                TM.sleep(60)
             elif collection.xip_package == "upload_api":
                 LOG.info(f"Creating package for file in '{bagit_dir}'")
                 package_path = R2P.create_package(bagit_dir, bagit_preserv_ref)
