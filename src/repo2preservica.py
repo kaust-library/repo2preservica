@@ -90,8 +90,7 @@ def main(input):
                 LOG.info(f"Removing metadata file '{metadata_path}'")
                 OS.remove(metadata_path)
                 uploaded_folders.append(bagit_dir)
-                num_submissions = num_submissions + 1
-                TM.sleep(60)
+
             elif collection.xip_package == "upload_api":
                 LOG.info(f"Creating package for file in '{bagit_dir}'")
                 package_path = R2P.create_package(bagit_dir, bagit_preserv_ref)
@@ -110,6 +109,12 @@ def main(input):
                     "'xip_package' must be 'zip' or 'upload_api'. Fix `ingest.cfg' file"
                 )
                 raise ValueError("Incorrect value for 'xip_package'")
+            #
+            # After the ingestion, give some time for Preservica to start
+            # moving to our bucket.
+            #
+            TM.sleep(60)
+            # num_submissions = num_submissions + 1
         else:
             LOG.info(f"Preservica folder '{bagit_name}' already exists")
             LOG.info("Skipping folder")
