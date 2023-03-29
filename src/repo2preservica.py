@@ -113,7 +113,10 @@ def main(input):
             # After the ingestion, give some time for Preservica to start
             # moving to our bucket.
             #
-            TM.sleep(60)
+            LOG.info("Sleeping 2 minutes")
+            TM.sleep(120)
+            # Hopefully we don't need to control the number of ingested 
+            # files anymore
             # num_submissions = num_submissions + 1
         else:
             LOG.info(f"Preservica folder '{bagit_name}' already exists")
