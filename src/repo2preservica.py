@@ -113,7 +113,7 @@ def main(input):
             # After the ingestion, give some time for Preservica to start
             # moving to our bucket.
             #
-            LOG.info("Sleeping 2 minutes", ends='...')
+            LOG.info("Sleeping 2 minutes")
             TM.sleep(120)
             LOG.info('done')
             # Hopefully we don't need to control the number of ingested 
