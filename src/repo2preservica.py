@@ -12,9 +12,14 @@ import pprint as PP
 import time as TM
 
 
-@CL.command()
+@CL.group()
+def repo2pres():
+    pass
+
+@repo2pres.command()
 @CL.argument("input", type=CL.Path("r"))
-def main(input):
+def ingest(input):
+    """Ingest items from repository into Preservica"""
     # Python >3.8: LOG.basicConfig(encoding="utf-8", level=LOG.INFO)
     LOG.basicConfig(level=LOG.INFO)
     # Read credentials from the environment variables
@@ -127,6 +132,20 @@ def main(input):
     # Compare SHA1 of files ingested with the original value from the
     # repository.
     #
+    #
+    # The End.
+    #
+    LOG.info("The End.")
+    OS.chdir(old_dir)
+
+@repo2pres.command()
+def verify():
+
+    """Verify the checksum of ingested items"""
+    DOT.load_dotenv()
+    entity = PRES.EntityAPI()
+
+    uploaded_folders = []
     for uploaded in uploaded_folders:
         uploaded_name = uploaded.name
         print(f"Bag name: '{uploaded_name}'")
@@ -160,15 +179,10 @@ def main(input):
             else:
                 LOG.error("Error comparing checksum")
 
-    #
-    # The End.
-    #
-    LOG.info("The End.")
-    OS.chdir(old_dir)
-
+    
 
 if __name__ == "__main__":
     # input = OS.path.join("config", "ingest.cfg")
     # print(f"Input file: {input}")
 
-    main()
+    repo2pres()
