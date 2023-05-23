@@ -3,7 +3,7 @@
 [FOLDERS]
 parent_folder = 7c923ec1-7ef6-486c-b92e-9e1f8dda8aa8
 # The folder on the test system is '/repo/in'
-data_folder = ./data/in
+input_folder = ./data/in
 bucket = com.preservica.my-corp.upload
 max_submissions = 10
 security_tag = open
