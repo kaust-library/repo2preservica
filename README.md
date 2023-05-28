@@ -15,7 +15,25 @@ request an Asset (Information Object) by its unique reference and display some o
 Files that need to be edited before running the script:
 
 - `.env` with the credentials to Preservica. See the file `.env_example`
-- `config/ingest.cfg` with informations "run time" information like the directory with the subdirectories to ingest, which Preservica folder to use, among others.
+- `etc/repo2preservica.cfg` with informations "run time" information like the directory with the subdirectories to ingest, which Preservica folder to use, among others.
+
+## Command Line Options
+
+The general configuration is located in the `etc` directory, but details can be customized with some command line options:
+
+* Options to the `ingest` parameter:
+  * `-i | --input-folder`: specify the folder with the items to ingest.
+  * `-p | --parent-folder`: The parent folder in Preservica.
+
+* Options to the `verify` parameter:
+  * `-c | --collection`: the item to verify.
+  * `-l | --list 'filename'`: file with a list of items to verify.
+
+* Options for the `history` parameter:
+  * `-a | --all`: list all ingested items.  
+  * `-s | --start-date YYYY-MM-DD`: list ingestion starting from `start-date`.
+  * `-l | --list 'filename'`: file with list of items to verify.
+
 
 ## Running the Script
 
