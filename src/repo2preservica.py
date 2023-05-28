@@ -17,7 +17,7 @@ def repo2pres():
     pass
 
 @repo2pres.command()
-@CL.argument("input", type=CL.Path("r"))
+@CL.option("input", type=CL.Path("r"))
 def ingest(input):
     """Ingest items from repository into Preservica"""
     # Python >3.8: LOG.basicConfig(encoding="utf-8", level=LOG.INFO)
