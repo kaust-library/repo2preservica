@@ -35,6 +35,34 @@ The general configuration is located in the `etc` directory, but details can be 
   * `-l | --list 'filename'`: file with list of items to verify.
 
 
+
+## Database
+
+The history of ingestion and verification is stored in a SQLite database:
+
+```
+Tables:
+
+item | ingested | verified |
+-----+----------+----------+
+id   | id       | id       |
+item | date     | date     |
+     | item_id  | item_id  |
+
+
+
+Example of all records:
+
+item | ingested   | verified   |
+-----+------------+------------+
+xyz  | YYYY-MM-DD | YYYY-MM-DD |
+abc  | YYYY-MM-DD | YYYY-MM-DD |
+abc  | YYYY-MM-DD | YYYY-MM-DD |
+abc  | YYYY-MM-DD | YYYY-MM-DD |
+def  | YYYY-MM-DD | YYYY-MM-DD |
+
+```
+
 ## Running the Script
 
 The script will try to import all folders in `data_folder` defined in the `ingest.cfg` file (`config` folder). It will say how many folders it was found, and the log messages will inform of the progress, like uploading or skipping because the folder already exists in Preservica.
