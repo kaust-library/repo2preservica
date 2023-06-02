@@ -127,6 +127,8 @@ def read_config(input_file: str) -> Folder:
     config._interpolation = CONF.ExtendedInterpolation()
     config.read(input_file)
 
+    print(f"input_file: '{input_file}'")
+    
     folders = config["FOLDERS"]
     folder = Folder(
         parent_folder_id=folders.get("parent_folder"),

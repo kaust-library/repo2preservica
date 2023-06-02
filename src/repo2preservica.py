@@ -14,11 +14,13 @@ import time as TM
 
 @CL.group()
 def repo2pres():
-    pass
+    """Ingestion of institutional repository into Preservica"""
 
 @repo2pres.command()
-@CL.option("input", type=CL.Path("r"))
-def ingest(input):
+@CL.option('-i', '--input-folder', type=CL.STRING, help='Folder with the items to ingest')
+@CL.option('-p', '--parent-folder', type=CL.STRING, help='Preservica parent folder')
+#@CL.argument("input", type=CL.Path("r"))
+def ingest(input_folder, parent_folder):
     """Ingest items from repository into Preservica"""
     # Python >3.8: LOG.basicConfig(encoding="utf-8", level=LOG.INFO)
     LOG.basicConfig(level=LOG.INFO)
@@ -34,7 +36,18 @@ def ingest(input):
     # Note. The term 'collection' is borrowed from the PyPreservica
     # documentation, to reference 'folder,' because it seems the term
     # 'folder' already is used by the Upload API.
+    input = '../etc/repo2preservica.cfg'
     collection = R2P.read_config(input)
+
+
+    CL.echo(f"input folder: {input_folder}")
+
+    # Overwrite the values from the config file with
+    # parameters from the command line (if provided.)
+    if input_folder:
+        collection.data_folder = input_folder
+    if parent_folder:
+        collection.parent_folder_id = parent_folder
 
     # Check if the parent collection ID was declared in the config file.
     if collection.parent_folder_id:
