@@ -200,20 +200,22 @@ def pres_checksum(entity, folder_name):
     return pres_items_sha
 
 
-def repo_checksum(folder_name):
+def repo_checksum(folder_path):
     """
-    Read the file 'sha1.txt' inside folder 'folder_name', and return a dictionary with file names and checksum.
+    Read the file 'sha1.txt' inside folder in path 'folder_path', and return a dictionary with file names and checksum.
     """
 
     repo_items_sha = {}
 
+    folder_name = folder_path.name
+
     # Read content of 'sha1.txt'
-    with open(PL.Path(folder_name).joinpath("sha1.txt")) as ff:
+    with open(PL.Path(folder_path).joinpath("sha1.txt")) as ff:
         text = ff.readlines()
     text = [line.strip().split()[3:] for line in text if len(line) > 1]
     for line in text:
         repo_path_list, repo_sha = line[0].split("/"), line[1]
-        bag_dir_pos = repo_path_list.index(folder_name) + 1
+        bag_dir_pos = repo_path_list.index(str(folder_name)) + 1
         repo_items = repo_path_list[bag_dir_pos:]
         # print(f"{'/'.join([ii for ii in repo_items])} {repo_sha}")
         repo_item = f"{'/'.join([ii for ii in repo_items])}"

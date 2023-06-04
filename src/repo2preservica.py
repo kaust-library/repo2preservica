@@ -16,10 +16,13 @@ import time as TM
 def repo2pres():
     """Ingestion of institutional repository into Preservica"""
 
+
 @repo2pres.command()
-@CL.option('-i', '--input-folder', type=CL.STRING, help='Folder with the items to ingest')
-@CL.option('-p', '--parent-folder', type=CL.STRING, help='Preservica parent folder')
-#@CL.argument("input", type=CL.Path("r"))
+@CL.option(
+    "-i", "--input-folder", type=CL.STRING, help="Folder with the items to ingest"
+)
+@CL.option("-p", "--parent-folder", type=CL.STRING, help="Preservica parent folder")
+# @CL.argument("input", type=CL.Path("r"))
 def ingest(input_folder, parent_folder):
     """Ingest items from repository into Preservica"""
     # Python >3.8: LOG.basicConfig(encoding="utf-8", level=LOG.INFO)
@@ -36,9 +39,8 @@ def ingest(input_folder, parent_folder):
     # Note. The term 'collection' is borrowed from the PyPreservica
     # documentation, to reference 'folder,' because it seems the term
     # 'folder' already is used by the Upload API.
-    input = 'repo2preservica.cfg'
+    input = "repo2preservica.cfg"
     collection = R2P.read_config(input)
-
 
     CL.echo(f"input folder: {input_folder}")
 
@@ -133,8 +135,8 @@ def ingest(input_folder, parent_folder):
             #
             LOG.info("Sleeping 2 minutes")
             TM.sleep(120)
-            LOG.info('done')
-            # Hopefully we don't need to control the number of ingested 
+            LOG.info("done")
+            # Hopefully we don't need to control the number of ingested
             # files anymore
             # num_submissions = num_submissions + 1
         else:
@@ -151,23 +153,42 @@ def ingest(input_folder, parent_folder):
     LOG.info("The End.")
     OS.chdir(old_dir)
 
+
 @repo2pres.command()
-def verify():
+@CL.option("-i", "--item", type=CL.STRING, help="Item to verify checksum")
+@CL.option(
+    "-l", "--file-list", type=CL.STRING, help="Input file with list of items to verify"
+)
+def verify(item: str, file_list: str) -> None:
+    LOG.basicConfig(level=LOG.INFO)
 
     """Verify the checksum of ingested items"""
     DOT.load_dotenv()
     entity = PRES.EntityAPI()
 
+    # We need to know the folder with
+    input = "repo2preservica.cfg"
+    collection = R2P.read_config(input)
+
     uploaded_folders = []
+
+    if item:
+        uploaded_folders.append(item)
+    elif file_list:
+        pass
+    else:
+        pass
+
+    print(f"updated_folders: {uploaded_folders}")
+
     for uploaded in uploaded_folders:
-        uploaded_name = uploaded.name
-        print(f"Bag name: '{uploaded_name}'")
+        print(f"Bag name: '{uploaded}'")
         # We need to consider the time it takes for Preservica to scan the
         # new files for virus before making them available on our area.
         # We will wait for 10 minutes (5 times for 2 minutes). If not
         # enough, we gave up and abort the script.
         for cc in range(1, 6):
-            pres_items_chk = R2P.pres_checksum(entity, uploaded_name)
+            pres_items_chk = R2P.pres_checksum(entity, uploaded)
             if pres_items_chk:
                 LOG.info("Finished reading checksum from Preservica")
                 break
@@ -183,16 +204,18 @@ def verify():
                 f"Unable to read items from Preservica after 5 attempts/10 minutes."
             )
             raise ValueError("'pres_items_chk' can't be empty after 10 minutes")
-        repo_items_chk = R2P.repo_checksum(uploaded_name)
+        r_uploaded_path = PL.Path.joinpath(
+            PL.Path.cwd(), PL.Path(collection.data_folder), uploaded
+        )
+        repo_items_chk = R2P.repo_checksum(r_uploaded_path)
         for kk in repo_items_chk.keys():
             if repo_items_chk[kk] == pres_items_chk[kk]:
                 LOG.info(f"{kk} is the same")
             elif repo_items_chk[kk] != pres_items_chk[kk]:
-                LOG.warn(f"{kk} is mismatch")
+                LOG.warning(f"{kk} is mismatch")
             else:
                 LOG.error("Error comparing checksum")
 
-    
 
 if __name__ == "__main__":
     # input = OS.path.join("config", "ingest.cfg")
