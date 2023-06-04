@@ -36,7 +36,7 @@ def ingest(input_folder, parent_folder):
     # Note. The term 'collection' is borrowed from the PyPreservica
     # documentation, to reference 'folder,' because it seems the term
     # 'folder' already is used by the Upload API.
-    input = '../etc/repo2preservica.cfg'
+    input = 'repo2preservica.cfg'
     collection = R2P.read_config(input)
 
 

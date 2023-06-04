@@ -123,16 +123,22 @@ class Folder(BaseModel):
 
 def read_config(input_file: str) -> Folder:
     """Read input file and return the folders (path) to ingest into Preservica"""
+
+    # Adding the full path to config file.
+
+    cfg_file = PL.Path.joinpath(
+        PL.Path.cwd(), 'etc', input_file
+    )
     config = CONF.ConfigParser()
     config._interpolation = CONF.ExtendedInterpolation()
-    config.read(input_file)
+    config.read(cfg_file)
 
-    print(f"input_file: '{input_file}'")
+    print(f"input_file: '{cfg_file}'")
     
     folders = config["FOLDERS"]
     folder = Folder(
         parent_folder_id=folders.get("parent_folder"),
-        data_folder=folders.get("data_folder"),
+        data_folder=folders.get("input_folder"),
         bucket=folders.get("bucket"),
         max_submissions=folders.getint("max_submissions", 10),
         security_tag=folders.get("security_tag", "open"),
