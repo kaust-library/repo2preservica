@@ -222,3 +222,14 @@ def repo_checksum(folder_path):
         repo_items_sha.update({repo_item: repo_sha})
 
     return repo_items_sha
+
+def verify_flist(file_list):
+    """Read file with items to verify"""
+
+    with open(file_list, 'r') as ff:
+        text = ff.readlines()
+
+    list_items = []
+    list_items.extend([line.strip() for line in text])
+
+    return list_items

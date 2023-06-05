@@ -175,7 +175,7 @@ def verify(item: str, file_list: str) -> None:
     if item:
         uploaded_folders.append(item)
     elif file_list:
-        pass
+        uploaded_folders = R2P.verify_flist(file_list)
     else:
         pass
 
