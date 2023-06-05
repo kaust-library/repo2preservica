@@ -123,14 +123,22 @@ class Folder(BaseModel):
 
 def read_config(input_file: str) -> Folder:
     """Read input file and return the folders (path) to ingest into Preservica"""
+
+    # Adding the full path to config file.
+
+    cfg_file = PL.Path.joinpath(
+        PL.Path.cwd(), 'etc', input_file
+    )
     config = CONF.ConfigParser()
     config._interpolation = CONF.ExtendedInterpolation()
-    config.read(input_file)
+    config.read(cfg_file)
 
+    print(f"input_file: '{cfg_file}'")
+    
     folders = config["FOLDERS"]
     folder = Folder(
         parent_folder_id=folders.get("parent_folder"),
-        data_folder=folders.get("data_folder"),
+        data_folder=folders.get("input_folder"),
         bucket=folders.get("bucket"),
         max_submissions=folders.getint("max_submissions", 10),
         security_tag=folders.get("security_tag", "open"),
@@ -192,23 +200,36 @@ def pres_checksum(entity, folder_name):
     return pres_items_sha
 
 
-def repo_checksum(folder_name):
+def repo_checksum(folder_path):
     """
-    Read the file 'sha1.txt' inside folder 'folder_name', and return a dictionary with file names and checksum.
+    Read the file 'sha1.txt' inside folder in path 'folder_path', and return a dictionary with file names and checksum.
     """
 
     repo_items_sha = {}
 
+    folder_name = folder_path.name
+
     # Read content of 'sha1.txt'
-    with open(PL.Path(folder_name).joinpath("sha1.txt")) as ff:
+    with open(PL.Path(folder_path).joinpath("sha1.txt")) as ff:
         text = ff.readlines()
     text = [line.strip().split()[3:] for line in text if len(line) > 1]
     for line in text:
         repo_path_list, repo_sha = line[0].split("/"), line[1]
-        bag_dir_pos = repo_path_list.index(folder_name) + 1
+        bag_dir_pos = repo_path_list.index(str(folder_name)) + 1
         repo_items = repo_path_list[bag_dir_pos:]
         # print(f"{'/'.join([ii for ii in repo_items])} {repo_sha}")
         repo_item = f"{'/'.join([ii for ii in repo_items])}"
         repo_items_sha.update({repo_item: repo_sha})
 
     return repo_items_sha
+
+def verify_flist(file_list):
+    """Read file with items to verify"""
+
+    with open(file_list, 'r') as ff:
+        text = ff.readlines()
+
+    list_items = []
+    list_items.extend([line.strip() for line in text])
+
+    return list_items
