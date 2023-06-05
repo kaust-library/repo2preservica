@@ -26,7 +26,7 @@ The general configuration is located in the `etc` directory, but details can be 
   * `-p | --parent-folder`: The parent folder in Preservica.
 
 * Options to the `verify` parameter:
-  * `-c | --collection`: the item to verify.
+  * `-i | --item`: the item to verify.
   * `-l | --list 'filename'`: file with a list of items to verify.
 
 * Options for the `history` parameter:
