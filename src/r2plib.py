@@ -10,10 +10,35 @@ import typing as TY
 import os as OS
 import zipfile as ZIP
 import pyPreservica as PRES
+import sqlite3
 
 path_to_file = TY.Union[str, PL.Path]
 path_to_dir = path_to_file
 
+
+def add_item_db(items: list[str], date: str) -> None:
+    """
+    Insert 'items' in the DB.
+    """
+
+    conn = sqlite3.connect("r2p.db")
+    cur = conn.cursor()
+
+    for item in items:
+        res = cur.execute("SELECT * FROM items WHERE item=?", (item,)).fetchall()
+        if not len(res):
+            print(f"New item '{item}'")
+            cur.execute("INSERT INTO items VALUES(NULL, ?)", (item,))
+        else:
+            print(f"Duplicated item '{item}'")
+
+        params = {"dt_ingest": date, "item": item}
+        cur.execute(
+            "INSERT INTO ingested (id, id_item, dt_ingest, is_verified) SELECT NULL, id, :dt_ingest,0 FROM items WHERE item = :item",
+            params,
+        )
+
+    conn.commit()    
 
 def create_package(bagit_dir: path_to_dir, parent_folder: str) -> path_to_file:
     """Create a XIPv6 package (zip file) from the files in 'bagit_dir'

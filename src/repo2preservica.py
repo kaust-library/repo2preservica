@@ -10,7 +10,7 @@ import os as OS
 import pathlib as PL
 import pprint as PP
 import time as TM
-
+import datetime as DT
 
 @CL.group()
 def repo2pres():
@@ -142,6 +142,12 @@ def ingest(input_folder, parent_folder):
         else:
             LOG.info(f"Preservica folder '{bagit_name}' already exists")
             LOG.info("Skipping folder")
+        
+        #
+        # Add new items to the database.
+        # today as string in ISO format ("YYYY-MM-DD")
+        # add_item_db(uploaded_folders, DT.date.today().isoformat())
+
 
     #
     # Compare SHA1 of files ingested with the original value from the
