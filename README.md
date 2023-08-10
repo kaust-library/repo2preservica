@@ -68,8 +68,7 @@ def  | YYYY-MM-DD | YYYY-MM-DD |
 The script will try to import all folders in `data_folder` defined in the `ingest.cfg` file (`config` folder). It will say how many folders it was found, and the log messages will inform of the progress, like uploading or skipping because the folder already exists in Preservica.
 
 ```
-(venv) PS C:\Users\garcm0b\Work\repo2preservica> python .\src\repo2preservica.py .\config\ingest.cfg
-(venv) PS C:\Users\garcm0b\Work\repo2preservica> python .\src\repo2preservica.py .\config\ingest.cfg
+(venv) PS C:\Users\garcm0b\Work\repo2preservica> python .\src\repo2preservica.py ingest
 INFO:root:Entity: 'pyPreservica version: 1.6.1  (Preservica 6.5 Compatible) Connected to: eu.preservica.com Preservica version: 6.6.1 as eamon.smallwood@kaust.edu.sa in tenancy KAUST'
 INFO:root:Files will be ingest into 'REPOSITORY_ETD_TEST'.
 INFO:root:Start of bagging process.
