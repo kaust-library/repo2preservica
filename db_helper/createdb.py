@@ -21,9 +21,9 @@ def main():
     #
     # Put the db in parent folder of "db_helper" (the current folder (cwd)).
     sql_dir = Path.cwd().parent
-    sql_db = sql_dir / 'r2p.db'
+    sql_file = sql_dir / 'r2p.db'
 
-    con = sqlite3.connect(sql_db)
+    con = sqlite3.connect(sql_file)
 
     cur = con.cursor()
 
