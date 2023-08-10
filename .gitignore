@@ -6,6 +6,7 @@ packages
 .vscode/
 *ipynb
 *txt
+r2p.db
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
