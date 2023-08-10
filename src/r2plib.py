@@ -21,7 +21,10 @@ def add_item_db(items: list[str], date: str) -> None:
     Insert 'items' in the DB.
     """
 
-    conn = sqlite3.connect("r2p.db")
+    sql_dir = PL.Path.cwd().parent
+    sql_file = sql_dir / 'r2p.db'
+
+    conn = sqlite3.connect(sql_file)
     cur = conn.cursor()
 
     for item in items:
