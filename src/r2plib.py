@@ -11,19 +11,28 @@ import os as OS
 import zipfile as ZIP
 import pyPreservica as PRES
 import sqlite3
+import logging as LOG
+from typing import Optional
+
+LOG.basicConfig(level=LOG.INFO)
 
 path_to_file = TY.Union[str, PL.Path]
 path_to_dir = path_to_file
 
 
-def add_item_db(items: list[str], date: str) -> None:
+def add_item_db(items: list[str], date: str, sql_dir: Optional[PL.Path]) -> None:
     """
     Insert 'items' in the DB.
     """
 
-    sql_dir = PL.Path.cwd().parent
+    if not sql_dir:
+        sql_dir = PL.Path.cwd()
     sql_file = sql_dir / 'r2p.db'
 
+    LOG.info(f"DB file: '{sql_file}'")
+
+    print(f"items: '{items}'")
+    print(f"date: '{date}'")
     conn = sqlite3.connect(sql_file)
     cur = conn.cursor()
 

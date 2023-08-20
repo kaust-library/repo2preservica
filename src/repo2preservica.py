@@ -43,7 +43,7 @@ def ingest(input_folder, parent_folder):
     input = "repo2preservica.cfg"
     collection = R2P.read_config(input)
 
-    CL.echo(f"input folder: {input_folder}")
+    LOG.info(f"input folder: {input_folder}")
 
     # Overwrite the values from the config file with
     # parameters from the command line (if provided.)
@@ -144,10 +144,11 @@ def ingest(input_folder, parent_folder):
             LOG.info(f"Preservica folder '{bagit_name}' already exists")
             LOG.info("Skipping folder")
 
-        #
-        # Add new items to the database.
-        # today as string in ISO format ("YYYY-MM-DD")
-        R2P.add_item_db(uploaded_folders, DT.date.today().isoformat())
+    #
+    # Add new items to the database.
+    # today as string in ISO format ("YYYY-MM-DD")
+    print(f"Uploaded folders '{len(uploaded_folders)}': '{uploaded_folders}'")
+    R2P.add_item_db(uploaded_folders, DT.date.today().isoformat(), old_dir)
 
     #
     # Compare SHA1 of files ingested with the original value from the
