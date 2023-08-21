@@ -184,7 +184,7 @@ def verify(item: str, file_list: str) -> None:
     elif file_list:
         uploaded_folders = R2P.verify_flist(file_list)
     else:
-        pass
+        uploaded_folders = R2P.verify_ingested(DT.date.today().isoformat(), PL.Path.cwd() )
 
     print(f"updated_folders: {uploaded_folders}")
 

@@ -13,11 +13,43 @@ import pyPreservica as PRES
 import sqlite3
 import logging as LOG
 from typing import Optional
+from collections import namedtuple
 
 LOG.basicConfig(level=LOG.INFO)
 
 path_to_file = TY.Union[str, PL.Path]
 path_to_dir = path_to_file
+
+
+def verify_ingested(verify_date: str) -> list[str]:
+    """Verify ingested items"""
+
+    if not sql_dir:
+        sql_dir = PL.Path.cwd()
+    sql_file = sql_dir / "r2p.db"
+
+    LOG.info(f"DB file: '{sql_file}'")
+
+    conn = sqlite3.connect(sql_file)
+    cur = conn.cursor()
+
+    # Check items that were ingested but not verified, or that were ingested again.
+    res = cur.execute("SELECT * FROM ingested WHERE is_verified=FALSE").fetchall()
+    ingested_item = namedtuple(
+        "i_item", ["id", "id_item", "date_ingested", "is_verified"]
+    )
+
+    for ii in map(ingested_item._make, res):
+        vv = {"id": None, "id_item": ii.id_item, "dt_verified": verify_date}
+        cur.execute(
+            "INSERT INTO verified (id, id_item, dt_verify) VALUES(NULL, :id_item, :dt_verified)",
+            vv,
+        )
+        cur.execute("UPDATE ingested SET is_verified = 1 WHERE id_item = :id_item", vv)
+
+    conn.commit()
+    print(f"Total changes: '{conn.total_changes}'")
+
 
 
 def add_item_db(items: list[str], date: str, sql_dir: Optional[PL.Path]) -> None:
@@ -27,16 +59,15 @@ def add_item_db(items: list[str], date: str, sql_dir: Optional[PL.Path]) -> None
 
     if not sql_dir:
         sql_dir = PL.Path.cwd()
-    sql_file = sql_dir / 'r2p.db'
+    sql_file = sql_dir / "r2p.db"
 
     LOG.info(f"DB file: '{sql_file}'")
 
-    print(f"items: '{items}'")
-    print(f"date: '{date}'")
     conn = sqlite3.connect(sql_file)
     cur = conn.cursor()
 
-    for item in items:
+    for ii in items:
+        item = ii.name
         res = cur.execute("SELECT * FROM items WHERE item=?", (item,)).fetchall()
         if not len(res):
             print(f"New item '{item}'")
@@ -50,7 +81,8 @@ def add_item_db(items: list[str], date: str, sql_dir: Optional[PL.Path]) -> None
             params,
         )
 
-    conn.commit()    
+    conn.commit()
+
 
 def create_package(bagit_dir: path_to_dir, parent_folder: str) -> path_to_file:
     """Create a XIPv6 package (zip file) from the files in 'bagit_dir'
@@ -163,15 +195,13 @@ def read_config(input_file: str) -> Folder:
 
     # Adding the full path to config file.
 
-    cfg_file = PL.Path.joinpath(
-        PL.Path.cwd(), 'etc', input_file
-    )
+    cfg_file = PL.Path.joinpath(PL.Path.cwd(), "etc", input_file)
     config = CONF.ConfigParser()
     config._interpolation = CONF.ExtendedInterpolation()
     config.read(cfg_file)
 
     print(f"input_file: '{cfg_file}'")
-    
+
     folders = config["FOLDERS"]
     folder = Folder(
         parent_folder_id=folders.get("parent_folder"),
@@ -260,10 +290,11 @@ def repo_checksum(folder_path):
 
     return repo_items_sha
 
+
 def verify_flist(file_list):
     """Read file with items to verify"""
 
-    with open(file_list, 'r') as ff:
+    with open(file_list, "r") as ff:
         text = ff.readlines()
 
     list_items = []
