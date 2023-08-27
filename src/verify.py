@@ -75,8 +75,11 @@ def verify(item: str, file_list: str) -> None:
                 LOG.error("Error comparing checksum")
 
 
+def main():
+    verify()
+
 if __name__ == "__main__":
     # input = OS.path.join("config", "ingest.cfg")
     # print(f"Input file: {input}")
 
-    verify()
+    main()

@@ -148,6 +148,9 @@ def ingest(input_folder, parent_folder):
     OS.chdir(old_dir)
     LOG.info("The End.")
 
-def mail():
+def main():
 
     ingest()
+
+if __name__ == "__main__":
+    main()
