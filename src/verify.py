@@ -12,6 +12,7 @@ import pprint as PP
 import time as TM
 import datetime as DT
 
+
 @CL.command()
 @CL.option("-i", "--item", type=CL.STRING, help="Item to verify checksum")
 @CL.option(
@@ -77,6 +78,7 @@ def verify(item: str, file_list: str) -> None:
 
 def main():
     verify()
+
 
 if __name__ == "__main__":
     # input = OS.path.join("config", "ingest.cfg")

@@ -38,7 +38,8 @@ def add_item_db(items: list[str], date: str) -> None:
             params,
         )
 
-    conn.commit()    
+    conn.commit()
+
 
 def create_package(bagit_dir: path_to_dir, parent_folder: str) -> path_to_file:
     """Create a XIPv6 package (zip file) from the files in 'bagit_dir'
@@ -151,15 +152,13 @@ def read_config(input_file: str) -> Folder:
 
     # Adding the full path to config file.
 
-    cfg_file = PL.Path.joinpath(
-        PL.Path.cwd(), 'etc', input_file
-    )
+    cfg_file = PL.Path.joinpath(PL.Path.cwd(), "etc", input_file)
     config = CONF.ConfigParser()
     config._interpolation = CONF.ExtendedInterpolation()
     config.read(cfg_file)
 
     print(f"input_file: '{cfg_file}'")
-    
+
     folders = config["FOLDERS"]
     folder = Folder(
         parent_folder_id=folders.get("parent_folder"),
@@ -248,10 +247,11 @@ def repo_checksum(folder_path):
 
     return repo_items_sha
 
+
 def verify_flist(file_list):
     """Read file with items to verify"""
 
-    with open(file_list, 'r') as ff:
+    with open(file_list, "r") as ff:
         text = ff.readlines()
 
     list_items = []
