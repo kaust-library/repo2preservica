@@ -17,24 +17,56 @@ Files that need to be edited before running the script:
 - `.env` with the credentials to Preservica. See the file `.env_example`
 - `etc/repo2preservica.cfg` with informations "run time" information like the directory with the subdirectories to ingest, which Preservica folder to use, among others.
 
+## Initializing the Database
+
+Before the first run of the script, it's necessary to initialize the database by running the script `createdb.py.` The script will read the three SQL files and create the tables.
+
+```
+(r2p) PS C:\Users\garcm0b\Work\repo2preservica\db_helper> python .\createdb.py
+Creating table from 'items.sql'... done
+Creating table from 'verify.sql'... done
+Creating table from 'ingest.sql'... done
+```
+
+And this will create the db file in the parent directory
+
+```
+(r2p) PS C:\Users\garcm0b\Work\repo2preservica> ls
+(...)
+-a---            9/5/2023  2:18 PM          16384 r2p.db
+```
+
 ## Command Line Options
 
 The general configuration is located in the `etc` directory, but details can be customized with some command line options:
 
-* Options to the `ingest` parameter:
-  * `-i | --input-folder`: specify the folder with the items to ingest.
-  * `-p | --parent-folder`: The parent folder in Preservica.
+- Options to the `ingest` script:
 
-* Options to the `verify` parameter:
-  * `-i | --item`: the item to verify.
-  * `-l | --list 'filename'`: file with a list of items to verify.
+  - `-i | --input-folder`: specify the folder with the items to ingest.
+  - `-p | --parent-folder`: The parent folder in Preservica.
 
-* Options for the `history` parameter:
-  * `-a | --all`: list all ingested items.  
-  * `-s | --start-date YYYY-MM-DD`: list ingestion starting from `start-date`.
-  * `-l | --list 'filename'`: file with list of items to verify.
+```
+(r2p) PS C:\Users\garcm0b\Work\repo2preservica> python .\src\ingest.py --help
+Usage: ingest.py [OPTIONS]
 
+  Ingest items from repository into Preservica
 
+Options:
+  -i, --input-folder TEXT   Folder with the items to ingest
+  -p, --parent-folder TEXT  Preservica parent folder
+  --help                    Show this message and exit.
+(r2p) PS C:\Users\garcm0b\Work\repo2preservica>
+```
+
+- Options to the `verify` parameter:
+
+  - `-i | --item`: the item to verify.
+  - `-l | --list 'filename'`: file with a list of items to verify.
+
+- Options for the `history` parameter:
+  - `-a | --all`: list all ingested items.
+  - `-s | --start-date YYYY-MM-DD`: list ingestion starting from `start-date`.
+  - `-l | --list 'filename'`: file with list of items to verify.
 
 ## Database
 
