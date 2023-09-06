@@ -24,7 +24,8 @@ def add_item_db(items: list[str], date: str) -> None:
     conn = sqlite3.connect("r2p.db")
     cur = conn.cursor()
 
-    for item in items:
+    for ii in items:
+        item = ii.name
         res = cur.execute("SELECT * FROM items WHERE item=?", (item,)).fetchall()
         if not len(res):
             print(f"New item '{item}'")
