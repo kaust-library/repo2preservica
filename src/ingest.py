@@ -11,6 +11,7 @@ import pathlib as PL
 import pprint as PP
 import time as TM
 import datetime as DT
+import sys
 
 @CL.command()
 @CL.option(
@@ -26,9 +27,13 @@ def ingest(input_folder, parent_folder):
     DOT.load_dotenv()
 
     # Preservica objects
-    entity = PRES.EntityAPI()
-    upload = PRES.UploadAPI()
-    LOG.info(f"Entity: '{entity}'")
+    try:
+        entity = PRES.EntityAPI()
+        upload = PRES.UploadAPI()
+        LOG.info(f"Entity: '{entity}'")
+    except:
+        LOG.critical("Error getting credentials from Preservica. Aborting script.")
+        sys.exit(1)
 
     # Read config. file.
     # Note. The term 'collection' is borrowed from the PyPreservica
@@ -141,7 +146,7 @@ def ingest(input_folder, parent_folder):
         #
         # Add new items to the database.
         # today as string in ISO format ("YYYY-MM-DD")
-        # add_item_db(uploaded_folders, DT.date.today().isoformat())
+        R2P.add_item_db(uploaded_folders, DT.date.today().isoformat())
     #
     # The End.
     #
