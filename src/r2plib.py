@@ -16,12 +16,12 @@ path_to_file = TY.Union[str, PL.Path]
 path_to_dir = path_to_file
 
 
-def add_item_db(items: list[str], date: str) -> None:
+def add_item_db(items: list[str], date: str, db_dir: PL.Path) -> None:
     """
     Insert 'items' in the DB.
     """
 
-    db_file = PL.Path("r2p.db")
+    db_file = db_dir.joinpath("r2p.db")
     if db_file.exists():
         conn = sqlite3.connect(db_file)
         cur = conn.cursor()
