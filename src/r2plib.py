@@ -21,11 +21,16 @@ def add_item_db(items: list[str], date: str) -> None:
     Insert 'items' in the DB.
     """
 
-    conn = sqlite3.connect("r2p.db")
-    cur = conn.cursor()
-
+    db_file = PL.Path("r2p.db")
+    if db_file.exists():
+        conn = sqlite3.connect(db_file)
+        cur = conn.cursor()
+    else:
+        raise FileNotFoundError
+    
     for ii in items:
         item = ii.name
+        print(f"item: '{item}'")
         res = cur.execute("SELECT * FROM items WHERE item=?", (item,)).fetchall()
         if not len(res):
             print(f"New item '{item}'")
@@ -40,6 +45,7 @@ def add_item_db(items: list[str], date: str) -> None:
         )
 
     conn.commit()
+    conn.close()
 
 
 def create_package(bagit_dir: path_to_dir, parent_folder: str) -> path_to_file:
