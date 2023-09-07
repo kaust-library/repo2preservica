@@ -1,4 +1,5 @@
 # Test files to ingest into Preservica
+r2p.db
 data/
 src/test_zip.py
 config/ingest.cfg
