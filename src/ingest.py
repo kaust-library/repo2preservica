@@ -13,19 +13,28 @@ import time as TM
 import datetime as DT
 import sys
 
+
 @CL.command()
 @CL.option(
     "-i", "--input-folder", type=CL.STRING, help="Folder with the items to ingest"
 )
 @CL.option("-p", "--parent-folder", type=CL.STRING, help="Preservica parent folder")
+@CL.option("-n", "--no-upload", type=CL.BOOL, help="Doesn't upload to Preservia")
 # @CL.argument("input", type=CL.Path("r"))
-def ingest(input_folder, parent_folder):
+def ingest(input_folder, parent_folder, no_upload):
     """Ingest items from repository into Preservica"""
     # Python >3.8: LOG.basicConfig(encoding="utf-8", level=LOG.INFO)
     LOG.basicConfig(level=LOG.INFO)
     # Read credentials from the environment variables
     DOT.load_dotenv()
 
+    # We need the opposite of no_upload.
+    if no_upload:
+        do_upload = False
+    else:
+        do_upload = True
+
+    LOG.info(f"do_upload: '{do_upload}'")
     # Preservica objects
     try:
         entity = PRES.EntityAPI()
@@ -100,13 +109,16 @@ def ingest(input_folder, parent_folder):
                 metadata_path = R2P.save_metadata(bagit_name)
                 LOG.info(f"Creating zip with folder '{bagit_name}' content")
                 zipfile = R2P.create_zipfile(bagit_dir)
-                upload.upload_zip_package_to_S3(
-                    path_to_zip_package=zipfile,
-                    folder=bagit_preserv_ref,
-                    bucket_name=collection.bucket,
-                    callback=PRES.UploadProgressConsoleCallback(zipfile),
-                    delete_after_upload=False,
-                )
+                if do_upload:
+                    upload.upload_zip_package_to_S3(
+                        path_to_zip_package=zipfile,
+                        folder=bagit_preserv_ref,
+                        bucket_name=collection.bucket,
+                        callback=PRES.UploadProgressConsoleCallback(zipfile),
+                        delete_after_upload=False,
+                    )
+                else:
+                    LOG.info("Skipping upload")
                 LOG.info(f"Removing metadata file '{metadata_path}'")
                 OS.remove(metadata_path)
                 uploaded_folders.append(bagit_dir)
@@ -142,20 +154,23 @@ def ingest(input_folder, parent_folder):
         else:
             LOG.info(f"Preservica folder '{bagit_name}' already exists")
             LOG.info("Skipping folder")
-        
+
         #
         # Add new items to the database.
         # today as string in ISO format ("YYYY-MM-DD")
-        R2P.add_item_db(uploaded_folders, DT.date.today().isoformat())
+        # The db file should be in the 'root' directory of the script,
+        # that is, where we called the script.
+        R2P.add_item_db(uploaded_folders, DT.date.today().isoformat(), old_dir)
     #
     # The End.
     #
     OS.chdir(old_dir)
     LOG.info("The End.")
 
-def main():
 
+def main():
     ingest()
+
 
 if __name__ == "__main__":
     main()
