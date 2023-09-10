@@ -18,6 +18,32 @@ path_to_file = TY.Union[str, PL.Path]
 path_to_dir = path_to_file
 
 
+def db_unverified() -> List[str]:
+    """
+    Returns a list with the items that don't have a verification date
+    """
+
+    db_file = PL.Path(".").parent.joinpath("r2p.db")
+
+    if db_file.exists():
+        conn = sqlite3.connect(db_file)
+        cur = conn.cursor()
+    else:
+        raise FileNotFoundError
+
+    res = cur.execute(
+        """
+        SELECT items.item FROM ingested 
+        INNER JOIN items 
+        ON ingested.is_verified=0 AND items.id=ingested.id_item;
+        """
+    )
+
+    print(f"res: '{res}'")
+
+    return [rr[0] for rr in res]
+
+
 def add_item_db(items: List[str], date: str, db_dir: PL.Path) -> None:
     """
     Insert 'items' in the DB.
@@ -29,7 +55,7 @@ def add_item_db(items: List[str], date: str, db_dir: PL.Path) -> None:
         cur = conn.cursor()
     else:
         raise FileNotFoundError
-    
+
     for ii in items:
         item = ii.name
         print(f"item: '{item}'")
