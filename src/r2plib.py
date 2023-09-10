@@ -12,11 +12,13 @@ import zipfile as ZIP
 import pyPreservica as PRES
 import sqlite3
 
+from typing import List
+
 path_to_file = TY.Union[str, PL.Path]
 path_to_dir = path_to_file
 
 
-def add_item_db(items: list[str], date: str, db_dir: PL.Path) -> None:
+def add_item_db(items: List[str], date: str, db_dir: PL.Path) -> None:
     """
     Insert 'items' in the DB.
     """
