@@ -42,27 +42,10 @@ def verify(item: str, file_list: str) -> None:
 
     for uploaded in uploaded_folders:
         print(f"Bag name: '{uploaded}'")
-        # We need to consider the time it takes for Preservica to scan the
-        # new files for virus before making them available on our area.
-        # We will wait for 10 minutes (5 times for 2 minutes). If not
-        # enough, we gave up and abort the script.
-        for cc in range(1, 6):
-            pres_items_chk = R2P.pres_checksum(entity, uploaded)
-            if pres_items_chk:
-                LOG.info("Finished reading checksum from Preservica")
-                break
-            else:
-                LOG.info(
-                    "Waiting for Preservica scan items for virus and make them available for reading."
-                )
-                LOG.info(f"Sleeping 2 minutes, {cc} of 5.")
-                TM.sleep(120)
+        pres_items_chk = R2P.pres_checksum(entity, uploaded)
         if not pres_items_chk:
             # Something went wrong!!
-            LOG.critical(
-                f"Unable to read items from Preservica after 5 attempts/10 minutes."
-            )
-            raise ValueError("'pres_items_chk' can't be empty after 10 minutes")
+            raise ValueError("'pres_items_chk' can't be empty")
         r_uploaded_path = PL.Path.joinpath(
             PL.Path.cwd(), PL.Path(collection.data_folder), uploaded
         )
