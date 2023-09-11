@@ -53,11 +53,14 @@ def verify(item: str, file_list: str) -> None:
         for kk in repo_items_chk.keys():
             if repo_items_chk[kk] == pres_items_chk[kk]:
                 LOG.info(f"{kk} is the same")
+                chk_status = 1
             elif repo_items_chk[kk] != pres_items_chk[kk]:
                 LOG.warning(f"{kk} is mismatch")
+                chk_status = 2                
             else:
                 LOG.error("Error comparing checksum")
-
+                chk_status = 3                
+    
 
 def main():
     verify()
