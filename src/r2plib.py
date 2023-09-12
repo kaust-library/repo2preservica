@@ -11,11 +11,58 @@ import os as OS
 import zipfile as ZIP
 import pyPreservica as PRES
 import sqlite3
+import datetime as DT
 
 from typing import List
 
 path_to_file = TY.Union[str, PL.Path]
 path_to_dir = path_to_file
+
+
+def add_verified(uploaded: str, chk_status: int) -> None:
+    """
+    Add a verified item to the database with date of verification and its status
+    """
+
+    db_file = PL.Path(".").parent.joinpath("r2p.db")
+
+    if db_file.exists():
+        conn = sqlite3.connect(db_file)
+        cur = conn.cursor()
+    else:
+        raise FileNotFoundError
+
+    # Find item id
+    res = cur.execute(
+        "SELECT id from items WHERE item=:uploaded;",
+        {"uploaded": uploaded},
+    ).fetchall()
+
+    # We take id of the first item. And should be only one.
+    item_id = res[0][0]
+
+    # Get current date
+    today = DT.date.isoformat(DT.date.today())
+
+    # Add to the database of verified items
+    params = {"item_id": item_id, "dt_verify": today}
+    cur.execute(
+        """
+        INSERT INTO verified (id, id_item, dt_verify)
+        SELECT NULL, :item_id, :dt_verify
+        """,
+        params,
+    )
+
+    # Update the status of the ingested items.
+    # TODO: move status to table 'items.'
+    params = {"item_id": item_id, "chk_status": chk_status}
+    cur.execute(
+        "UPDATE ingested SET is_verified = :chk_status WHERE id_item = :item_id;",
+        params,
+    )
+    conn.commit()
+    conn.close()
 
 
 def db_unverified() -> List[str]:
@@ -59,7 +106,9 @@ def add_item_db(items: List[str], date: str, db_dir: PL.Path) -> None:
     for ii in items:
         item = ii.name
         print(f"item: '{item}'")
-        res = cur.execute("SELECT * FROM items WHERE item=?", (item,)).fetchall()
+        res = cur.execute(
+            "SELECT * FROM items WHERE item=:item", {"item": item}
+        ).fetchall()
         if not len(res):
             print(f"New item '{item}'")
             cur.execute("INSERT INTO items VALUES(NULL, ?)", (item,))

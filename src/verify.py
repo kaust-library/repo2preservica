@@ -56,11 +56,14 @@ def verify(item: str, file_list: str) -> None:
                 chk_status = 1
             elif repo_items_chk[kk] != pres_items_chk[kk]:
                 LOG.warning(f"{kk} is mismatch")
-                chk_status = 2                
+                chk_status = 2
             else:
                 LOG.error("Error comparing checksum")
-                chk_status = 3                
-    
+                chk_status = 3
+        #
+        # Add item to db.
+        R2P.add_verified(uploaded, chk_status)
+
 
 def main():
     verify()
