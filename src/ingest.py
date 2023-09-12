@@ -155,12 +155,12 @@ def ingest(input_folder, parent_folder, no_upload):
             LOG.info(f"Preservica folder '{bagit_name}' already exists")
             LOG.info("Skipping folder")
 
-        #
-        # Add new items to the database.
-        # today as string in ISO format ("YYYY-MM-DD")
-        # The db file should be in the 'root' directory of the script,
-        # that is, where we called the script.
-        R2P.add_item_db(uploaded_folders, DT.date.today().isoformat(), old_dir)
+    #
+    # Add new items to the database.
+    # today as string in ISO format ("YYYY-MM-DD")
+    # The db file should be in the 'root' directory of the script,
+    # that is, where we called the script.
+    R2P.add_item_db(uploaded_folders, DT.date.today().isoformat(), old_dir)
     #
     # The End.
     #
