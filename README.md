@@ -17,6 +17,19 @@ Files that need to be edited before running the script:
 - `.env` with the credentials to Preservica. See the file `.env_example`
 - `etc/repo2preservica.cfg` with informations "run time" information like the directory with the subdirectories to ingest, which Preservica folder to use, among others.
 
+## Virtual Environment
+
+The extra Python libraries are installed in a virtual environment (a _venv_) to avoid polluting the Python system-wide installation. To create the virtual environment:
+
+1. Create the environment with<br>
+```python3 -m venv venv --prompt r2p```<br>
+the `prompt` is optional but make easier to identify the virtual environment.
+1. Activate the new environment<br>
+```. venv/bin/activate```
+1. Install the extra packages:<br>
+```pip install --upgrade -r requirements.txt```<br>
+The option `--upgrade` can be dangerous since there is no garantie that the system will work with newer versions of the library.
+
 ## Initializing the Database
 
 Before the first run of the script, it's necessary to initialize the database by running the script `createdb.py.` The script will read the three SQL files and create the tables.
