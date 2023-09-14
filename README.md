@@ -10,6 +10,14 @@ Within the structural objects comes the information objects. These objects which
 
 request an Asset (Information Object) by its unique reference and display some of its attributes. Information objects are considered a single intellectual unit for purposes of management and description: for example, a book, document, map, photograph or database etc.
 
+## Cloning the Repository
+
+Cloning the repository
+
+```
+library-sds@lthlibtest:/data/scripts$ git clone https://github.com/kaust-library/repo2preservica.git
+```
+
 ## Configuration
 
 Files that need to be edited before running the script:
@@ -22,13 +30,13 @@ Files that need to be edited before running the script:
 The extra Python libraries are installed in a virtual environment (a _venv_) to avoid polluting the Python system-wide installation. To create the virtual environment:
 
 1. Create the environment with<br>
-```python3 -m venv venv --prompt r2p```<br>
-the `prompt` is optional but make easier to identify the virtual environment.
+   `python3 -m venv venv --prompt r2p`<br>
+   the `prompt` is optional but make easier to identify the virtual environment.
 1. Activate the new environment<br>
-```. venv/bin/activate```
+   `. venv/bin/activate`
 1. Install the extra packages:<br>
-```pip install --upgrade -r requirements.txt```<br>
-The option `--upgrade` can be dangerous since there is no garantee that the system will work with newer versions of the library.
+   `pip install --upgrade -r requirements.txt`<br>
+   The option `--upgrade` can be dangerous since there is no garantee that the system will work with newer versions of the library.
 
 ## The Database
 
@@ -37,7 +45,7 @@ Creating a simple [SQLite3](https://www.sqlite.org/index.html) database to store
 Below is a simple [ER diagram](https://mermaid.js.org/syntax/entityRelationshipDiagram.html) of how the tables are related.
 
 ```mermaid
---- 
+---
 title: Ingestion and Verification Diagram
 ---
 erDiagram
@@ -132,7 +140,7 @@ flowchart LR
 
 The default behavior, that is, without any other command line options, for scripts are:
 
-- `ingest.py`: ingest all items in the `parent folder` defined in the  configuration file `etc/repo2preservica.cfg`.
+- `ingest.py`: ingest all items in the `parent folder` defined in the configuration file `etc/repo2preservica.cfg`.
 - `verify.py`: verify the SHA1 of all items ingested by not verified.
 
 ### Changing Options
@@ -181,7 +189,6 @@ Options:
   - `-a | --all`: list all ingested items.
   - `-s | --start-date YYYY-MM-DD`: list ingestion starting from `start-date`.
   - `-l | --list 'filename'`: file with list of items to verify.
-
 
 ## Running the Script
 
